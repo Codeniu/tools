@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG 转 ICO 在线转换器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+            margin-bottom: 30px;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            background: #e8ebff;
+            border-color: #4c5fd5;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            color: #999;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .preview-container {
+            display: none;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .preview-title {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .preview-images {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .preview-item {
+            text-align: center;
+        }
+
+        .preview-image {
+            width: 64px;
+            height: 64px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .preview-size {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .convert-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto 20px;
+            font-weight: 600;
+            min-width: 200px;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+
+        .convert-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .options {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .option-group {
+            margin-bottom: 20px;
+        }
+
+        .option-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .option-label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .size-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .size-option {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .size-option:hover {
+            border-color: #667eea;
+        }
+
+        .size-option input[type="checkbox"] {
+            margin-right: 6px;
+            cursor: pointer;
+        }
+
+        .size-option label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .preview-images {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PNG 转 ICO 转换器</h1>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">点击选择图片或拖拽到此处</div>
+            <div class="upload-hint">支持 PNG, JPG, JPEG, BMP 格式</div>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <div class="preview-container" id="previewContainer">
+            <div class="preview-title">预览</div>
+            <div class="preview-images" id="previewImages"></div>
+        </div>
+
+        <div class="options">
+            <div class="option-group">
+                <label class="option-label">选择图标尺寸：</label>
+                <div class="size-options">
+                    <div class="size-option">
+                        <input type="checkbox" id="size16" value="16">
+                        <label for="size16">16x16</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size24" value="24">
+                        <label for="size24">24x24</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size32" value="32">
+                        <label for="size32">32x32</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size48" value="48">
+                        <label for="size48">48x48</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size64" value="64" checked>
+                        <label for="size64">64x64</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size128" value="128">
+                        <label for="size128">128x128</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="checkbox" id="size256" value="256">
+                        <label for="size256">256x256</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="convert-btn" id="convertBtn" disabled>转换为 ICO</button>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        // 引入JSZip库用于创建ZIP文件
+        const JSZip_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+
+        class PNGToICO {
+            constructor() {
+                this.fileInput = document.getElementById('fileInput');
+                this.uploadArea = document.getElementById('uploadArea');
+                this.previewContainer = document.getElementById('previewContainer');
+                this.previewImages = document.getElementById('previewImages');
+                this.convertBtn = document.getElementById('convertBtn');
+                this.message = document.getElementById('message');
+                this.currentImage = null;
+
+                this.loadJSZip().then(() => {
+                    this.init();
+                });
+            }
+
+            async loadJSZip() {
+                return new Promise((resolve) => {
+                    if (window.JSZip) {
+                        resolve();
+                        return;
+                    }
+
+                    const script = document.createElement('script');
+                    script.src = JSZip_URL;
+                    script.onload = resolve;
+                    document.head.appendChild(script);
+                });
+            }
+
+            init() {
+                this.uploadArea.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+
+                this.fileInput.addEventListener('change', (e) => {
+                    this.handleFileSelect(e.target.files[0]);
+                });
+
+                this.uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.add('dragover');
+                });
+
+                this.uploadArea.addEventListener('dragleave', () => {
+                    this.uploadArea.classList.remove('dragover');
+                });
+
+                this.uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        this.handleFileSelect(file);
+                    }
+                });
+
+                this.convertBtn.addEventListener('click', () => {
+                    this.convertToICO();
+                });
+
+                // 监听尺寸选择变化，实时更新预览
+                const checkboxes = document.querySelectorAll('.size-option input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        if (this.currentImage) {
+                            this.showPreview();
+                        }
+                    });
+                });
+            }
+
+            handleFileSelect(file) {
+                if (!file || !file.type.startsWith('image/')) {
+                    this.showMessage('请选择有效的图片文件', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        this.currentImage = img;
+                        this.showPreview();
+                        this.convertBtn.disabled = false;
+                        this.hideMessage();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            showPreview() {
+                this.previewContainer.style.display = 'block';
+                this.previewImages.innerHTML = '';
+
+                const sizes = this.getSelectedSizes();
+                sizes.forEach(size => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size;
+                    canvas.className = 'preview-image';
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.drawImage(this.currentImage, 0, 0, size, size);
+
+                    const sizeLabel = document.createElement('div');
+                    sizeLabel.className = 'preview-size';
+                    sizeLabel.textContent = `${size}x${size}`;
+
+                    previewItem.appendChild(canvas);
+                    previewItem.appendChild(sizeLabel);
+                    this.previewImages.appendChild(previewItem);
+                });
+            }
+
+            getSelectedSizes() {
+                const checkboxes = document.querySelectorAll('.size-option input[type="checkbox"]:checked');
+                return Array.from(checkboxes).map(cb => parseInt(cb.value));
+            }
+
+            async convertToICO() {
+                if (!this.currentImage) {
+                    this.showMessage('请先选择图片', 'error');
+                    return;
+                }
+
+                const sizes = this.getSelectedSizes();
+                if (sizes.length === 0) {
+                    this.showMessage('请至少选择一个尺寸', 'error');
+                    return;
+                }
+
+                try {
+                    if (sizes.length === 1) {
+                        // 单个尺寸，直接下载ICO文件
+                        const icoData = await this.createICO(this.currentImage, sizes);
+                        this.downloadICO(icoData, `icon_${sizes[0]}x${sizes[0]}.ico`);
+                        this.showMessage('转换成功！ICO文件已下载', 'success');
+                    } else {
+                        // 多个尺寸，创建ZIP包
+                        const zip = new JSZip();
+                        const originalName = this.getOriginalFileName();
+
+                        for (const size of sizes) {
+                            const icoData = await this.createICO(this.currentImage, [size]);
+                            zip.file(`${originalName}_${size}x${size}.ico`, icoData);
+                        }
+
+                        const zipBlob = await zip.generateAsync({ type: 'blob' });
+                        this.downloadZip(zipBlob, `${originalName}_icons.zip`);
+                        this.showMessage(`转换成功！${sizes.length}个ICO文件已打包下载`, 'success');
+                    }
+                } catch (error) {
+                    console.error('转换错误:', error);
+                    this.showMessage('转换失败，请重试', 'error');
+                }
+            }
+
+            getOriginalFileName() {
+                const fileName = this.fileInput.files[0]?.name || 'icon';
+                return fileName.replace(/\.[^/.]+$/, ''); // 移除扩展名
+            }
+
+            async createICO(img, sizes) {
+                const images = [];
+
+                for (const size of sizes) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.drawImage(img, 0, 0, size, size);
+
+                    const imageData = ctx.getImageData(0, 0, size, size);
+                    const rgba = this.imageDataToRGBA(imageData);
+                    const dibData = this.createDIBForICO(rgba, size, size);
+                    images.push({ size, data: dibData });
+                }
+
+                return this.createICOFile(images);
+            }
+
+            imageDataToRGBA(imageData) {
+                const rgba = [];
+                for (let i = 0; i < imageData.data.length; i += 4) {
+                    rgba.push(
+                        imageData.data[i],     // R
+                        imageData.data[i + 1], // G
+                        imageData.data[i + 2], // B
+                        imageData.data[i + 3]  // A
+                    );
+                }
+                return rgba;
+            }
+
+            createDIBForICO(rgba, width, height) {
+                // ICO需要包含DIB头 + 像素数据 + AND mask
+                const dibHeaderSize = 40;
+                const pixelDataSize = width * height * 4;
+                // AND mask 每行需要4字节对齐
+                const andMaskRowSize = Math.ceil(width / 8);
+                const andMaskRowSizePadded = Math.ceil(andMaskRowSize / 4) * 4;
+                const andMaskSize = andMaskRowSizePadded * height;
+                const totalSize = dibHeaderSize + pixelDataSize + andMaskSize;
+
+                const buffer = new ArrayBuffer(totalSize);
+                const view = new DataView(buffer);
+
+                // DIB头 (BITMAPINFOHEADER)
+                view.setUint32(0, dibHeaderSize, true);           // 头大小
+                view.setInt32(4, width, true);                    // 宽度
+                view.setInt32(8, height * 2, true);               // 高度 * 2 (ICO要求)
+                view.setUint16(12, 1, true);                      // 颜色平面数
+                view.setUint16(14, 32, true);                     // 每像素位数
+                view.setUint32(16, 0, true);                      // 压缩方式 (0=无压缩)
+                view.setUint32(20, pixelDataSize + andMaskSize, true); // 图像大小
+                view.setUint32(24, 2835, true);                   // 水平分辨率
+                view.setUint32(28, 2835, true);                   // 垂直分辨率
+                view.setUint32(32, 0, true);                      // 调色板颜色数
+                view.setUint32(36, 0, true);                      // 重要颜色数
+
+                // 像素数据 (自下而上，BGRA格式)
+                let offset = dibHeaderSize;
+                for (let y = height - 1; y >= 0; y--) {
+                    for (let x = 0; x < width; x++) {
+                        const i = (y * width + x) * 4;
+                        view.setUint8(offset++, rgba[i + 2]); // B
+                        view.setUint8(offset++, rgba[i + 1]); // G
+                        view.setUint8(offset++, rgba[i]);     // R
+                        view.setUint8(offset++, rgba[i + 3]); // A
+                    }
+                }
+
+                // AND mask (透明度掩码，1表示透明)
+                for (let y = 0; y < height; y++) {
+                    let byteValue = 0;
+                    let bitIndex = 0;
+
+                    for (let x = 0; x < andMaskRowSizePadded; x++) {
+                        if (x < andMaskRowSize) {
+                            const pixelX = x * 8;
+                            let maskByte = 0;
+
+                            for (let bit = 0; bit < 8 && pixelX + bit < width; bit++) {
+                                const alphaIndex = ((height - 1 - y) * width + (pixelX + bit)) * 4 + 3;
+                                const alpha = rgba[alphaIndex];
+                                // 如果alpha < 128，认为是透明
+                                if (alpha < 128) {
+                                    maskByte |= (1 << (7 - bit));
+                                }
+                            }
+
+                            view.setUint8(offset++, maskByte);
+                        } else {
+                            view.setUint8(offset++, 0); // 填充字节
+                        }
+                    }
+                }
+
+                return buffer;
+            }
+
+            createICOFile(images) {
+                images.sort((a, b) => b.size - a.size);
+
+                const iconCount = images.length;
+                let headerSize = 6 + (16 * iconCount);
+                let imageSize = 0;
+
+                images.forEach(img => {
+                    imageSize += img.data.byteLength;
+                });
+
+                const totalSize = headerSize + imageSize;
+                const buffer = new ArrayBuffer(totalSize);
+                const view = new DataView(buffer);
+
+                view.setUint16(0, 0, true);
+                view.setUint16(2, 1, true);
+                view.setUint16(4, iconCount, true);
+
+                let offset = headerSize;
+                let dirOffset = 6;
+
+                images.forEach(img => {
+                    view.setUint8(dirOffset, img.size === 256 ? 0 : img.size);     // 宽度
+                    view.setUint8(dirOffset + 1, img.size === 256 ? 0 : img.size); // 高度
+                    view.setUint8(dirOffset + 2, 0);                                 // 颜色数
+                    view.setUint8(dirOffset + 3, 0);                                 // 保留
+                    view.setUint16(dirOffset + 4, 1, true);                         // 颜色平面数
+                    view.setUint16(dirOffset + 6, 32, true);                        // 每像素位数
+                    view.setUint32(dirOffset + 8, img.data.byteLength, true);       // 图像大小
+                    view.setUint32(dirOffset + 12, offset, true);                   // 图像偏移
+
+                    dirOffset += 16;
+                    offset += img.data.byteLength;
+                });
+
+                offset = headerSize;
+                images.forEach(img => {
+                    const imageData = new Uint8Array(img.data);
+                    for (let i = 0; i < imageData.length; i++) {
+                        view.setUint8(offset++, imageData[i]);
+                    }
+                });
+
+                return buffer;
+            }
+
+            downloadICO(icoData, filename) {
+                const blob = new Blob([icoData], { type: 'image/x-icon' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            downloadZip(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            showMessage(text, type) {
+                this.message.textContent = text;
+                this.message.className = `message ${type}`;
+                this.message.style.display = 'block';
+            }
+
+            hideMessage() {
+                this.message.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new PNGToICO();
+        });
+    </script>
+</body>
+</html>
