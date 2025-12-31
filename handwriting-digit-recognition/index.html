@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>手写数字识别</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>✍️ 手写数字识别</h1>
+      <p class="subtitle">基于深度学习的数字识别，使用卷积神经网络（CNN）</p>
+
+      <!-- 页签导航 -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('recognize')">
+          🔍 数字识别
+        </button>
+        <button class="tab-btn" onclick="switchTab('training')">
+          🎓 模型训练
+        </button>
+        <button class="tab-btn" onclick="switchTab('testing')">
+          🧪 样本集测试
+        </button>
+      </div>
+
+      <!-- 数字识别页签 -->
+      <div id="tab-recognize" class="tab-content active">
+        <div id="statusMessage" class="status-message status-loading">
+          正在加载模型，请稍候...
+        </div>
+
+        <!-- 模型管理 -->
+        <div class="settings-section">
+          <h3>🔧 模型管理</h3>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: 15px;
+            "
+          >
+            <div class="setting-item">
+              <label>上传模型文件</label>
+              <input
+                type="file"
+                id="modelUpload"
+                accept=".json"
+                onchange="handleModelUpload(event)"
+              />
+              <label for="modelUpload" class="file-upload-btn"
+                >📁 选择 JSON 文件</label
+              >
+              <span
+                id="uploadFileName"
+                style="margin-left: 8px; font-size: 12px; color: #666"
+              ></span>
+            </div>
+
+            <div class="setting-item">
+              <label>模型列表</label>
+              <div class="model-list" id="modelList">
+                <div style="text-align: center; color: #999; padding: 20px">
+                  暂无保存的模型
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="main-content">
+          <div class="canvas-section">
+            <div class="canvas-container">
+              <canvas id="drawCanvas" width="280" height="280"></canvas>
+            </div>
+
+            <div class="controls">
+              <button
+                class="btn btn-primary"
+                id="predictBtn"
+                onclick="predict()"
+                disabled
+              >
+                🔍 识别
+              </button>
+              <button class="btn btn-secondary" onclick="clearCanvas()">
+                🗑️ 清除
+              </button>
+            </div>
+
+            <div class="brush-size">
+              <label>画笔粗细：</label>
+              <input type="range" id="brushSize" min="5" max="30" value="15" />
+              <span id="brushSizeValue">15</span>
+            </div>
+          </div>
+
+          <div class="result-section">
+            <div class="result-card">
+              <div class="prediction-label">识别结果</div>
+              <div class="prediction-number" id="prediction">-</div>
+              <div class="confidence-bar-container">
+                <div class="confidence-label">
+                  <span>置信度</span>
+                  <span id="confidenceValue">0%</span>
+                </div>
+                <div class="confidence-bar">
+                  <div
+                    class="confidence-fill"
+                    id="confidenceFill"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="probabilities">
+              <h3>各数字概率</h3>
+              <div class="prob-grid" id="probGrid">
+                <div class="prob-item">
+                  <div class="prob-digit">0</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">1</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">2</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">3</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">4</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">5</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">6</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">7</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">8</div>
+                  <div class="prob-value">0%</div>
+                </div>
+                <div class="prob-item">
+                  <div class="prob-digit">9</div>
+                  <div class="prob-value">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 模型训练页签 -->
+      <div id="tab-training" class="tab-content">
+        <div class="settings-section">
+          <h3>🎓 训练设置</h3>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: 15px;
+            "
+          >
+            <div class="setting-item">
+              <label>训练数据集</label>
+              <div
+                style="
+                  padding: 8px;
+                  background: white;
+                  border: 1px solid #ddd;
+                  border-radius: 6px;
+                  font-size: 13px;
+                  color: #666;
+                "
+              >
+                📊 MNIST真实数据集<br />
+                • 55,000 训练样本<br />
+                • 10,000 测试样本
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <label>训练集大小 (1000-55000)</label>
+              <input
+                type="number"
+                id="trainSize"
+                value="10000"
+                min="1000"
+                max="55000"
+                step="1000"
+              />
+            </div>
+
+            <div class="setting-item">
+              <label>批次大小 (128-1024)</label>
+              <input
+                type="number"
+                id="batchSize"
+                value="512"
+                min="128"
+                max="1024"
+                step="64"
+              />
+            </div>
+
+            <div class="setting-item">
+              <label>训练轮数 (x1000次)</label>
+              <input
+                type="number"
+                id="trainEpochs"
+                value="10"
+                min="1"
+                max="50"
+                step="1"
+              />
+              <div style="font-size: 11px; color: #999; margin-top: 3px;">
+                例如: 10 = 10,000次训练
+              </div>
+            </div>
+          </div>
+
+          <div class="train-controls">
+            <button
+              class="btn btn-primary"
+              id="trainBtn"
+              onclick="startTraining()"
+            >
+              🚀 开始训练
+            </button>
+            <button class="btn btn-secondary" onclick="saveModelAs()">
+              💾 另存为模型
+            </button>
+          </div>
+
+          <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">准备训练...</div>
+          </div>
+        </div>
+
+        <!-- 训练可视化 -->
+        <div class="training-visualization" id="trainingVisualization" style="display: none;">
+          <div class="settings-section">
+            <h3>📊 训练可视化</h3>
+
+            <!-- 当前训练图片 -->
+            <div class="viz-card" style="margin-bottom: 15px;">
+              <h4>当前训练图片</h4>
+              <div class="current-image-container">
+                <canvas
+                  id="currentImageCanvas"
+                  class="current-image-canvas"
+                  width="140"
+                  height="140"
+                ></canvas>
+                <div class="image-info">
+                  <p><strong>图片索引：</strong><span id="imageIndex">-</span></p>
+                  <p><strong>图片标签：</strong><span id="imageLabel">-</span></p>
+                  <p><strong>已用时间：</strong><span id="metricTime">-</span></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 当前指标 -->
+            <div class="viz-card" style="margin-bottom: 15px;">
+              <h4>当前训练指标</h4>
+              <div class="metrics-display">
+                <div class="metric-item">
+                  <div class="metric-label">训练损失</div>
+                  <div class="metric-value" id="metricLoss">-</div>
+                </div>
+                <div class="metric-item">
+                  <div class="metric-label">已用时间</div>
+                  <div class="metric-value" id="metricTime">-</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 网络状态 -->
+            <div class="viz-card" style="margin-bottom: 15px;">
+              <h4>网络状态 (每100次训练更新)</h4>
+              <div id="networkInfo" style="font-size: 12px; line-height: 1.8; color: #666;">
+                等待训练开始...
+              </div>
+            </div>
+
+            <!-- 图表 -->
+            <div class="visualization-grid">
+              <div class="viz-card">
+                <h4>损失曲线</h4>
+                <div class="chart-container">
+                  <canvas id="lossChart"></canvas>
+                </div>
+              </div>
+              <div class="viz-card">
+                <h4>整体训练准确率曲线 (实时统计所有训练样本)</h4>
+                <div class="chart-container">
+                  <canvas id="accuracyChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- 测试结果 -->
+            <div class="viz-card" style="margin-bottom: 15px;">
+              <h4>测试准确率曲线 (每1000次训练测试100个样本)</h4>
+              <div class="chart-container" style="height: 200px;">
+                <canvas id="testChart"></canvas>
+              </div>
+            </div>
+
+            <!-- 混淆矩阵 -->
+            <div class="viz-card" style="margin-bottom: 15px;">
+              <div id="confusionMatrixContainer">
+                <h4>混淆矩阵 (每1000次训练更新)</h4>
+                <p style="color: #666;">等待训练...</p>
+              </div>
+            </div>
+
+            <!-- 每类准确率 -->
+            <div class="viz-card" style="margin-bottom: 15px;">
+              <div id="perClassAccuracyContainer">
+                <h4>各类数字准确率 (每1000次训练更新)</h4>
+                <p style="color: #666;">等待训练...</p>
+              </div>
+            </div>
+
+            <div class="viz-card">
+              <h4>测试结果详情</h4>
+              <div id="testResults" style="max-height: 300px; overflow-y: auto;">
+                等待测试...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="model-info">
+          <h4>ℹ️ 关于训练</h4>
+          <p>
+            • <strong>图像处理：</strong>28×28像素的MNIST图片（与预训练模型一致，无需裁剪）
+          </p>
+          <p>
+            • <strong>训练方式：</strong>在线训练，每次处理一个样本，每100次更新显示，每1000次测试100个样本
+          </p>
+          <p>
+            • <strong>网络架构：</strong>CNN架构，输入28×28，包含2个卷积层+池化层和全连接层（与预训练模型相同架构）
+          </p>
+          <p>
+            • <strong>权重导出：</strong>可保存完整模型（.json + .bin 文件），包含所有权重，可直接用于预测
+          </p>
+          <p>
+            • <strong>可视化：</strong>实时显示损失曲线、准确率曲线、混淆矩阵、各类数字准确率
+          </p>
+          <p>
+            • <strong>准确率稳定：</strong>使用更大测试集（100样本）和混淆矩阵分析，准确率显示更稳定
+          </p>
+        </div>
+      </div>
+
+      <!-- 样本集测试页签 -->
+      <div id="tab-testing" class="tab-content">
+        <div class="settings-section">
+          <h3>🧪 样本集测试</h3>
+          <p style="color: #666; margin-bottom: 15px; font-size: 13px;">
+            从 MNIST 测试集中随机选取样本进行预测，显示样本图片、实际值和预测值
+          </p>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: 15px;
+            "
+          >
+            <div class="setting-item">
+              <label>测试样本数量 (1-500)</label>
+              <input
+                type="number"
+                id="testSampleCount"
+                value="50"
+                min="1"
+                max="500"
+                step="10"
+              />
+              <div style="font-size: 11px; color: #999; margin-top: 3px;">
+                建议值: 10-100
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <label>操作</label>
+              <button
+                class="btn btn-primary"
+                id="startTestBtn"
+                onclick="startSampleTesting()"
+              >
+                🚀 开始测试
+              </button>
+            </div>
+          </div>
+
+          <!-- 测试进度 -->
+          <div class="progress-container" id="testProgressContainer" style="display: none;">
+            <div class="progress-bar">
+              <div class="progress-fill" id="testProgressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="testProgressText">准备测试...</div>
+          </div>
+        </div>
+
+        <!-- 测试结果 -->
+        <div class="settings-section" id="testResultsSection" style="display: none;">
+          <h3>📊 测试结果</h3>
+
+          <!-- 统计信息 -->
+          <div class="test-stats" id="testStats">
+            <div class="stat-item">
+              <div class="stat-label">总样本数</div>
+              <div class="stat-value" id="statTotal">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">正确数</div>
+              <div class="stat-value stat-correct" id="statCorrect">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">错误数</div>
+              <div class="stat-value stat-wrong" id="statWrong">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">准确率</div>
+              <div class="stat-value" id="statAccuracy">0%</div>
+            </div>
+          </div>
+
+          <!-- 样本结果详情 -->
+          <h4 style="margin-top: 20px; margin-bottom: 10px; font-size: 14px; color: #333;">
+            样本详情
+          </h4>
+          <div class="samples-grid" id="samplesGrid">
+            <!-- 样本卡片将动态插入到这里 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+
+    <!-- Chart.js 用于绘制训练曲线 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- 应用脚本 -->
+    <script src="js/data-loader.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/trainer.js"></script>
+  </body>
+</html>

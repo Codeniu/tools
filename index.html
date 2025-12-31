@@ -1,334 +1,383 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Web Tools Collection - 在线工具集合</title>
-    <meta name="description" content="免费的在线文件格式转换工具，包括 MP4 转 GIF、PNG 转 ICO 等，纯前端实现，保护隐私">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    <meta
+      name="description"
+      content="免费的在线工具集合，包括 MP4 转 GIF、PNG 转 ICO、手写数字识别等，纯前端实现，保护隐私"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-            line-height: 1.6;
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+        line-height: 1.6;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
 
-        header {
-            text-align: center;
-            color: white;
-            margin-bottom: 60px;
-            animation: fadeInDown 0.8s ease;
-        }
+      header {
+        text-align: center;
+        color: white;
+        margin-bottom: 60px;
+        animation: fadeInDown 0.8s ease;
+      }
 
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .features {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
+
+      .feature {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.95rem;
+        backdrop-filter: blur(10px);
+      }
+
+      .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+      }
+
+      .tool-card {
+        background: white;
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.8s ease;
+        animation-fill-mode: both;
+      }
+
+      .tool-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+
+      .tool-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .tool-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      .tool-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .tool-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      .tool-card h2 {
+        color: #333;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+      }
+
+      .tool-card p {
+        color: #666;
+        margin-bottom: 20px;
+        line-height: 1.7;
+      }
+
+      .features-list {
+        list-style: none;
+        margin-bottom: 25px;
+      }
+
+      .features-list li {
+        color: #555;
+        padding: 8px 0;
+        padding-left: 25px;
+        position: relative;
+      }
+
+      .features-list li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #667eea;
+        font-weight: bold;
+      }
+
+      .tool-link {
+        display: inline-block;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .tool-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+
+      .badge {
+        display: inline-block;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+
+      footer {
+        text-align: center;
+        color: white;
+        padding: 40px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      footer p {
+        opacity: 0.9;
+        margin-bottom: 10px;
+      }
+
+      footer a {
+        color: white;
+        text-decoration: underline;
+      }
+
+      .tech-stack {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+      }
+
+      .tech-tag {
+        display: inline-block;
+        background: #f5f5f5;
+        color: #666;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
         h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+          font-size: 2rem;
         }
 
         .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.95;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        .feature {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 0.95rem;
-            backdrop-filter: blur(10px);
+          font-size: 1rem;
         }
 
         .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
+          grid-template-columns: 1fr;
+        }
+
+        .features {
+          flex-direction: column;
+          align-items: center;
         }
 
         .tool-card {
-            background: white;
-            border-radius: 20px;
-            padding: 35px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.8s ease;
-            animation-fill-mode: both;
+          padding: 25px;
         }
+      }
 
-        .tool-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
+      .coming-soon {
+        text-align: center;
+        color: white;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        margin-top: 40px;
+      }
 
-        .tool-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
+      .coming-soon h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
 
-        .tool-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .tool-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .tool-card h2 {
-            color: #333;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-
-        .tool-card p {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.7;
-        }
-
-        .features-list {
-            list-style: none;
-            margin-bottom: 25px;
-        }
-
-        .features-list li {
-            color: #555;
-            padding: 8px 0;
-            padding-left: 25px;
-            position: relative;
-        }
-
-        .features-list li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        .tool-link {
-            display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .tool-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .badge {
-            display: inline-block;
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        footer {
-            text-align: center;
-            color: white;
-            padding: 40px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        footer p {
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        footer a {
-            color: white;
-            text-decoration: underline;
-        }
-
-        .tech-stack {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .tech-tag {
-            display: inline-block;
-            background: #f5f5f5;
-            color: #666;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin-right: 5px;
-            margin-bottom: 5px;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .features {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .tool-card {
-                padding: 25px;
-            }
-        }
-
-        .coming-soon {
-            text-align: center;
-            color: white;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            margin-top: 40px;
-        }
-
-        .coming-soon h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .coming-soon p {
-            opacity: 0.9;
-        }
+      .coming-soon p {
+        opacity: 0.9;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>Web Tools Collection</h1>
-            <p class="subtitle">免费的在线文件格式转换工具，纯前端实现，保护您的隐私</p>
-            <div class="features">
-                <span class="feature">🔒 隐私保护</span>
-                <span class="feature">⚡ 快速便捷</span>
-                <span class="feature">💻 无需安装</span>
-                <span class="feature">🆓 完全免费</span>
-            </div>
-        </header>
+      <header>
+        <h1>Web Tools Collection</h1>
+        <p class="subtitle">
+          免费的在线工具集合，包含格式转换、AI 识别等实用功能
+        </p>
+        <div class="features">
+          <span class="feature">🔒 隐私保护</span>
+          <span class="feature">⚡ 快速便捷</span>
+          <span class="feature">💻 无需安装</span>
+          <span class="feature">🆓 完全免费</span>
+        </div>
+      </header>
 
-        <div class="tools-grid">
-            <!-- MP4 to GIF 工具卡片 -->
-            <div class="tool-card">
-                <span class="tool-icon">🎬</span>
-                <span class="badge">热门工具</span>
-                <h2>MP4 转 GIF</h2>
-                <p>将 MP4 视频转换为 GIF 动图，支持自定义参数调整，实时预览转换效果。</p>
-                <ul class="features-list">
-                    <li>纯前端转换，无需上传文件</li>
-                    <li>可调节起始时间、持续时长</li>
-                    <li>支持自定义帧率和尺寸</li>
-                    <li>实时预览和进度显示</li>
-                    <li>基于 FFmpeg WASM 技术</li>
-                </ul>
-                <a href="./mp4-to-gif/mp4-to-gif.html" class="tool-link">立即使用 →</a>
-                <div class="tech-stack">
-                    <span class="tech-tag">FFmpeg WASM</span>
-                    <span class="tech-tag">HTML5</span>
-                    <span class="tech-tag">ES6+</span>
-                </div>
-            </div>
-
-            <!-- PNG to ICO 工具卡片 -->
-            <div class="tool-card">
-                <span class="tool-icon">🖼️</span>
-                <span class="badge">常用工具</span>
-                <h2>PNG 转 ICO</h2>
-                <p>将 PNG/JPG 等图片格式转换为 ICO 图标文件，支持多种尺寸批量转换。</p>
-                <ul class="features-list">
-                    <li>支持 PNG、JPG、JPEG、BMP 格式</li>
-                    <li>多尺寸选择（16x16 到 256x256）</li>
-                    <li>实时预览转换效果</li>
-                    <li>批量转换自动打包 ZIP</li>
-                    <li>符合 ICO 文件格式规范</li>
-                </ul>
-                <a href="./png-to-ico/png-to-ico.html" class="tool-link">立即使用 →</a>
-                <div class="tech-stack">
-                    <span class="tech-tag">Canvas API</span>
-                    <span class="tech-tag">Blob API</span>
-                    <span class="tech-tag">JSZip</span>
-                </div>
-            </div>
+      <div class="tools-grid">
+        <!-- MP4 to GIF 工具卡片 -->
+        <div class="tool-card">
+          <span class="tool-icon">🎬</span>
+          <span class="badge">热门工具</span>
+          <h2>MP4 转 GIF</h2>
+          <p>
+            将 MP4 视频转换为 GIF 动图，支持自定义参数调整，实时预览转换效果。
+          </p>
+          <ul class="features-list">
+            <li>纯前端转换，无需上传文件</li>
+            <li>可调节起始时间、持续时长</li>
+            <li>支持自定义帧率和尺寸</li>
+            <li>实时预览和进度显示</li>
+            <li>基于 FFmpeg WASM 技术</li>
+          </ul>
+          <a href="./mp4-to-gif/mp4-to-gif.html" class="tool-link"
+            >立即使用 →</a
+          >
+          <div class="tech-stack">
+            <span class="tech-tag">FFmpeg WASM</span>
+            <span class="tech-tag">HTML5</span>
+            <span class="tech-tag">ES6+</span>
+          </div>
         </div>
 
-        <div class="coming-soon">
-            <h3>更多工具开发中...</h3>
-            <p>敬请期待更多实用的在线转换工具</p>
+        <!-- PNG to ICO 工具卡片 -->
+        <div class="tool-card">
+          <span class="tool-icon">🖼️</span>
+          <span class="badge">常用工具</span>
+          <h2>PNG 转 ICO</h2>
+          <p>
+            将 PNG/JPG 等图片格式转换为 ICO 图标文件，支持多种尺寸批量转换。
+          </p>
+          <ul class="features-list">
+            <li>支持 PNG、JPG、JPEG、BMP 格式</li>
+            <li>多尺寸选择（16x16 到 256x256）</li>
+            <li>实时预览转换效果</li>
+            <li>批量转换自动打包 ZIP</li>
+            <li>符合 ICO 文件格式规范</li>
+          </ul>
+          <a href="./png-to-ico/png-to-ico.html" class="tool-link"
+            >立即使用 →</a
+          >
+          <div class="tech-stack">
+            <span class="tech-tag">Canvas API</span>
+            <span class="tech-tag">Blob API</span>
+            <span class="tech-tag">JSZip</span>
+          </div>
         </div>
 
-        <footer>
-            <p>所有工具均在浏览器本地运行，不会上传您的任何文件到服务器</p>
-            <p>
-                <a href="./README.md">查看文档</a> ·
-                <a href="https://github.com/codeniu/tools" target="_blank">GitHub</a>
-            </p>
-            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">
-                Made with ❤️ | Web Tools Collection
-            </p>
-        </footer>
+        <!-- 手写数字识别工具卡片 -->
+        <div class="tool-card">
+          <span class="tool-icon">✍️</span>
+          <span class="badge" style="background: #fff3cd; color: #856404"
+            >图像识别</span
+          >
+          <h2>手写数字识别</h2>
+          <p>基于图像特征分析的数字识别工具，在画板上手写数字，实时识别。</p>
+          <ul class="features-list">
+            <li>基于图像特征识别算法</li>
+            <li>支持 0-9 数字识别</li>
+            <li>实时预测和概率显示</li>
+            <li>完全离线，无需加载模型</li>
+            <li>支持触摸屏操作</li>
+          </ul>
+          <a
+            href="./handwriting-digit-recognition/index.html"
+            class="tool-link"
+          >
+            立即使用 →
+          </a>
+          <div class="tech-stack">
+            <span class="tech-tag">Canvas API</span>
+            <span class="tech-tag">图像处理</span>
+            <span class="tech-tag">特征算法</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="coming-soon">
+        <h3>更多工具开发中...</h3>
+        <p>敬请期待更多实用的在线转换工具</p>
+      </div>
+
+      <footer>
+        <p>所有工具均在浏览器本地运行，不会上传您的任何文件到服务器</p>
+        <p>
+          <a href="./README.md">查看文档</a> ·
+          <a href="https://github.com/codeniu/tools" target="_blank">GitHub</a>
+        </p>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8">
+          Made with ❤️ | Web Tools Collection
+        </p>
+      </footer>
     </div>
-</body>
+  </body>
 </html>

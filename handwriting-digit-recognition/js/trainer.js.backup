@@ -1,0 +1,533 @@
+// 训练可视化图表实例
+let charts = {
+  loss: null,
+  accuracy: null,
+  testAccuracy: null
+}
+
+// 训练历史数据
+let trainingHistory = {
+  iterations: [],
+  loss: [],
+  acc: []
+}
+
+// 测试历史数据
+let testHistory = {
+  iterations: [],
+  testAcc: [],
+  correctCount: []
+}
+
+// 开始训练（新的训练逻辑）
+async function startTraining() {
+  const totalIterations = parseInt(document.getElementById('trainEpochs').value) * 1000 || 10000
+  const batchSize = parseInt(document.getElementById('batchSize').value) || 100
+  const updateInterval = batchSize // 每批处理次数后更新权重
+
+  const trainBtn = document.getElementById('trainBtn')
+  trainBtn.disabled = true
+
+  // 显示进度和可视化
+  document.getElementById('progressContainer').style.display = 'block'
+  document.getElementById('trainingVisualization').style.display = 'block'
+
+  // 重置历史数据
+  trainingHistory = {
+    iterations: [],
+    loss: [],
+    acc: []
+  }
+  testHistory = {
+    iterations: [],
+    testAcc: [],
+    correctCount: []
+  }
+
+  // 初始化图表
+  initCharts()
+
+  try {
+    updateStatus('正在创建模型架构...', 'loading')
+    model = createModel()
+
+    // 加载MNIST数据集
+    const mnistData = new MnistData()
+    await mnistData.load()
+
+    // 准备训练和测试数据（转换为24x24）
+    const trainSize = Math.min(55000, totalIterations)
+    updateStatus(`正在准备${trainSize}个训练样本...`, 'loading')
+
+    // 获取训练数据并裁剪到24x24
+    const trainData = mnistData.nextTrainBatch(trainSize)
+    const trainXs28 = trainData.xs.reshape([trainSize, 28, 28, 1])
+    const trainXs = batchCropTo24x24(trainXs28)
+    const trainYs = trainData.labels
+    trainXs28.dispose() // 释放28x28数据
+
+    // 获取测试数据并裁剪到24x24
+    const testSize = 5000
+    const testData = mnistData.nextTestBatch(testSize)
+    const testXs28 = testData.xs.reshape([testSize, 28, 28, 1])
+    const testXs = batchCropTo24x24(testXs28)
+    const testYs = testData.labels
+    testXs28.dispose() // 释放28x28数据
+
+    // 显示第一个训练图片
+    displayTrainingImage(trainXs, 0, trainSize)
+
+    updateStatus(`开始训练... 总计${totalIterations}次，每${updateInterval}次更新权重`, 'loading')
+
+    const startTime = Date.now()
+
+    // 训练循环
+    for (let iteration = 0; iteration < totalIterations; iteration++) {
+      // 随机选择一个训练样本
+      const sampleIndex = Math.floor(Math.random() * trainSize)
+
+      // 使用gather而不是slice来获取单个样本
+      const sampleX = trainXs.gather([sampleIndex])
+      const sampleY = trainYs.gather([sampleIndex])
+
+      // 训练单个样本
+      const history = await model.fit(sampleX, sampleY, {
+        batchSize: 1,
+        epochs: 1,
+        verbose: 0
+      })
+
+      sampleX.dispose()
+      sampleY.dispose()
+
+      // 每批处理次数后更新一次权重（通过累积的fit操作自动完成）
+      // 记录损失和准确率
+      const currentLoss = history.history.loss[0]
+      const currentAcc = history.history.acc[0]
+
+      // 每完成一次训练，记录数据
+      if (iteration % 10 === 0 || iteration === totalIterations - 1) {
+        trainingHistory.iterations.push(iteration + 1)
+        trainingHistory.loss.push(currentLoss.toFixed(4))
+        trainingHistory.acc.push((currentAcc * 100).toFixed(2))
+
+        // 更新显示
+        const currentTime = Date.now()
+        const elapsedTime = ((currentTime - startTime) / 1000).toFixed(1)
+        const progress = (((iteration + 1) / totalIterations) * 100).toFixed(0)
+
+        document.getElementById('progressFill').style.width = progress + '%'
+        document.getElementById('progressText').textContent =
+          `训练中... ${progress}% (${iteration + 1}/${totalIterations}, 已用时: ${elapsedTime}秒)`
+
+        updateMetricsDisplay({
+          loss: currentLoss,
+          acc: currentAcc
+        }, elapsedTime)
+
+        updateCharts()
+      }
+
+      // 每100次训练，可视化网络状态
+      if ((iteration + 1) % 100 === 0) {
+        visualizeNetworkState(iteration + 1)
+        displayTrainingImage(trainXs, Math.floor(Math.random() * trainSize), trainSize)
+      }
+
+      // 每1000次训练，测试50个样本
+      if ((iteration + 1) % 1000 === 0 || iteration === totalIterations - 1) {
+        await testRandomSamples(testXs, testYs, iteration + 1)
+      }
+
+      // 让浏览器有机会更新UI
+      if (iteration % 10 === 0) {
+        await new Promise(resolve => setTimeout(resolve, 0))
+      }
+    }
+
+    // 清理内存
+    trainXs.dispose()
+    trainYs.dispose()
+    testXs.dispose()
+    testYs.dispose()
+
+    currentModelName = 'mnist-trained-24x24-' + Date.now()
+    updateStatus('模型训练完成！请使用"另存为模型"保存', 'ready')
+    document.getElementById('predictBtn').disabled = false
+  } catch (error) {
+    console.error('训练失败:', error)
+    updateStatus('训练失败: ' + error.message, 'error')
+  } finally {
+    trainBtn.disabled = false
+  }
+}
+
+// 可视化网络状态
+function visualizeNetworkState(iteration) {
+  try {
+    // 获取模型的层权重
+    const layers = model.layers
+    let networkInfo = `<strong>训练迭代: ${iteration}</strong><br>`
+    networkInfo += `<strong>网络结构:</strong><br>`
+
+    layers.forEach((layer, index) => {
+      const layerConfig = layer.getConfig()
+      const layerName = layer.name || `Layer_${index}`
+
+      if (layerConfig.filters) {
+        networkInfo += `  ${layerName}: Conv2D (${layerConfig.filters} filters, ${layerConfig.kernelSize}x${layerConfig.kernelSize})<br>`
+      } else if (layerConfig.units) {
+        networkInfo += `  ${layerName}: Dense (${layerConfig.units} units)<br>`
+      } else if (layer.poolSize) {
+        networkInfo += `  ${layerName}: MaxPooling (${layer.poolSize}x${layer.poolSize})<br>`
+      } else if (layer.rate !== undefined) {
+        networkInfo += `  ${layerName}: Dropout (${(layer.rate * 100).toFixed(0)}%)<br>`
+      } else {
+        networkInfo += `  ${layerName}: ${layer.className}<br>`
+      }
+    })
+
+    // 更新网络信息显示
+    const networkInfoDiv = document.getElementById('networkInfo')
+    if (networkInfoDiv) {
+      networkInfoDiv.innerHTML = networkInfo
+    }
+  } catch (error) {
+    console.error('可视化网络状态失败:', error)
+  }
+}
+
+// 测试随机样本
+async function testRandomSamples(testXs, testYs, iteration) {
+  try {
+    const numSamples = 50
+    const indices = []
+    const predictions = []
+    const labels = []
+
+    // 随机选择50个样本
+    for (let i = 0; i < numSamples; i++) {
+      const randomIndex = Math.floor(Math.random() * testXs.shape[0])
+      indices.push(randomIndex)
+
+      // 使用gather而不是slice
+      const testX = testXs.gather([randomIndex])
+      const testY = testYs.gather([randomIndex])
+
+      const pred = await model.predict(testX).data()
+      predictions.push(pred)
+      labels.push(Array.from(testY.dataSync()))
+
+      testX.dispose()
+      testY.dispose()
+    }
+
+    // 统计正确数量
+    let correctCount = 0
+    const results = []
+
+    for (let i = 0; i < numSamples; i++) {
+      const predictedDigit = predictions[i].indexOf(Math.max(...predictions[i]))
+      const actualDigit = labels[i].indexOf(1)
+
+      const isCorrect = predictedDigit === actualDigit
+      if (isCorrect) correctCount++
+
+      results.push({
+        index: indices[i],
+        predicted: predictedDigit,
+        actual: actualDigit,
+        correct: isCorrect,
+        confidence: (predictions[i][predictedDigit] * 100).toFixed(1)
+      })
+    }
+
+    const accuracy = (correctCount / numSamples * 100).toFixed(1)
+
+    // 更新测试历史
+    testHistory.iterations.push(iteration)
+    testHistory.testAcc.push(accuracy)
+    testHistory.correctCount.push(correctCount)
+
+    // 更新测试结果显示
+    updateTestResults(results, correctCount, accuracy, iteration)
+
+    // 更新测试图表
+    updateTestCharts()
+  } catch (error) {
+    console.error('测试失败:', error)
+  }
+}
+
+// 更新测试结果显示
+function updateTestResults(results, correctCount, accuracy, iteration) {
+  const testResultsDiv = document.getElementById('testResults')
+  if (!testResultsDiv) return
+
+  let html = `<strong>测试结果 (迭代 ${iteration}):</strong><br>`
+  html += `正确率: ${accuracy}% (${correctCount}/50)<br>`
+  html += `<div style="max-height: 200px; overflow-y: auto; margin-top: 10px;">`
+  html += `<table style="width: 100%; font-size: 12px; border-collapse: collapse;">`
+  html += `<tr style="background: #f0f0f0; position: sticky; top: 0;">`
+  html += `<th style="padding: 5px; border: 1px solid #ddd;">索引</th>`
+  html += `<th style="padding: 5px; border: 1px solid #ddd;">预测</th>`
+  html += `<th style="padding: 5px; border: 1px solid #ddd;">实际</th>`
+  html += `<th style="padding: 5px; border: 1px solid #ddd;">结果</th>`
+  html += `<th style="padding: 5px; border: 1px solid #ddd;">置信度</th>`
+  html += `</tr>`
+
+  results.forEach(result => {
+    const rowStyle = result.correct ? 'background: #d4edda;' : 'background: #f8d7da;'
+    html += `<tr style="${rowStyle}">`
+    html += `<td style="padding: 5px; border: 1px solid #ddd;">${result.index}</td>`
+    html += `<td style="padding: 5px; border: 1px solid #ddd;">${result.predicted}</td>`
+    html += `<td style="padding: 5px; border: 1px solid #ddd;">${result.actual}</td>`
+    html += `<td style="padding: 5px; border: 1px solid #ddd;">${result.correct ? '✓' : '✗'}</td>`
+    html += `<td style="padding: 5px; border: 1px solid #ddd;">${result.confidence}%</td>`
+    html += `</tr>`
+  })
+
+  html += `</table></div>`
+
+  testResultsDiv.innerHTML = html
+}
+
+// 显示训练图片（适配24x24）
+function displayTrainingImage(trainXs, index, maxSize) {
+  const canvas = document.getElementById('currentImageCanvas')
+  const ctx = canvas.getContext('2d')
+
+  // 清除画布
+  ctx.fillStyle = 'white'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  try {
+    // 确保索引在有效范围内
+    const safeIndex = Math.min(index, maxSize - 1)
+
+    // 使用gather获取单张图片 (24, 24, 1)
+    const image = trainXs.gather([safeIndex])
+
+    // 转换为 2D tensor (24, 24)
+    const image2D = image.squeeze()
+
+    // 获取像素数据并缩放到 0-255
+    const pixels = image2D.mul(255).dataSync()
+
+    // 创建 ImageData
+    const imageData = ctx.createImageData(24, 24)
+
+    // 填充像素数据（灰度图，所以RGB都是同一个值）
+    for (let i = 0; i < pixels.length; i++) {
+      const pixelValue = Math.floor(pixels[i])
+      const dataIndex = i * 4
+      imageData.data[dataIndex] = pixelValue     // R
+      imageData.data[dataIndex + 1] = pixelValue // G
+      imageData.data[dataIndex + 2] = pixelValue // B
+      imageData.data[dataIndex + 3] = 255        // A
+    }
+
+    // 将 24x24 的图像绘制到 140x140 的画布上
+    const tempCanvas = document.createElement('canvas')
+    tempCanvas.width = 24
+    tempCanvas.height = 24
+    const tempCtx = tempCanvas.getContext('2d')
+    tempCtx.putImageData(imageData, 0, 0)
+
+    // 放大绘制到主画布
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(tempCanvas, 0, 0, 140, 140)
+
+    // 更新图片信息
+    document.getElementById('imageIndex').textContent = safeIndex + 1
+    document.getElementById('imageLabel').textContent = '24x24 (裁剪后)'
+
+    // 清理 tensor
+    image.dispose()
+    image2D.dispose()
+  } catch (error) {
+    console.error('显示图片失败:', error)
+  }
+}
+
+// 更新指标显示
+function updateMetricsDisplay(logs, elapsedTime) {
+  document.getElementById('metricLoss').textContent = logs.loss.toFixed(4)
+  document.getElementById('metricAcc').textContent = (logs.acc * 100).toFixed(2) + '%'
+  document.getElementById('metricTime').textContent = elapsedTime + '秒'
+}
+
+// 初始化图表
+function initCharts() {
+  // 销毁旧图表
+  if (charts.loss) charts.loss.destroy()
+  if (charts.accuracy) charts.accuracy.destroy()
+  if (charts.testAccuracy) charts.testAccuracy.destroy()
+
+  // 创建损失图表
+  const lossCtx = document.getElementById('lossChart').getContext('2d')
+  charts.loss = new Chart(lossCtx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: '训练损失',
+          data: [],
+          borderColor: '#667eea',
+          backgroundColor: 'rgba(102, 126, 234, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top'
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: '损失值'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: '训练次数'
+          }
+        }
+      }
+    }
+  })
+
+  // 创建准确率图表
+  const accCtx = document.getElementById('accuracyChart').getContext('2d')
+  charts.accuracy = new Chart(accCtx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: '训练准确率',
+          data: [],
+          borderColor: '#667eea',
+          backgroundColor: 'rgba(102, 126, 234, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top'
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          title: {
+            display: true,
+            text: '准确率 (%)'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: '训练次数'
+          }
+        }
+      }
+    }
+  })
+
+  // 创建测试准确率图表
+  const testCtx = document.getElementById('testChart').getContext('2d')
+  if (testCtx) {
+    charts.testAccuracy = new Chart(testCtx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: '测试准确率 (50样本)',
+            data: [],
+            borderColor: '#f093fb',
+            backgroundColor: 'rgba(240, 147, 251, 0.1)',
+            fill: true,
+            tension: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: {
+              display: true,
+              text: '准确率 (%)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: '训练次数'
+            }
+          }
+        }
+      }
+    })
+  }
+}
+
+// 更新图表
+function updateCharts() {
+  // 更新损失图表
+  if (charts.loss) {
+    charts.loss.data.labels = trainingHistory.iterations
+    charts.loss.data.datasets[0].data = trainingHistory.loss
+    charts.loss.update('none')
+  }
+
+  // 更新准确率图表
+  if (charts.accuracy) {
+    charts.accuracy.data.labels = trainingHistory.iterations
+    charts.accuracy.data.datasets[0].data = trainingHistory.acc
+    charts.accuracy.update('none')
+  }
+}
+
+// 更新测试图表
+function updateTestCharts() {
+  if (charts.testAccuracy) {
+    charts.testAccuracy.data.labels = testHistory.iterations
+    charts.testAccuracy.data.datasets[0].data = testHistory.testAcc
+    charts.testAccuracy.update('none')
+  }
+}
