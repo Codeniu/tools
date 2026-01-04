@@ -13,6 +13,7 @@
 基于 FFmpeg WASM 技术实现的 MP4 视频转 GIF 动图工具。
 
 **主要功能：**
+
 - 纯前端转换，无需上传文件到服务器
 - 支持自定义起始时间、持续时间、帧率和输出尺寸
 - 实时预览和进度显示
@@ -23,6 +24,7 @@
 **使用说明：** 查看 [mp4-to-gif/mp4-to-gif.md](mp4-to-gif/mp4-to-gif.md)
 
 **快速启动：**
+
 ```bash
 cd mp4-to-gif
 node server.js
@@ -34,6 +36,7 @@ node server.js
 功能丰富的 PNG 转 ICO 在线转换器。
 
 **主要功能：**
+
 - 支持多种输入格式（PNG, JPG, JPEG, BMP）
 - 多尺寸选择（16x16 到 256x256）
 - 实时预览转换效果
@@ -44,6 +47,7 @@ node server.js
 **使用说明：** 查看 [png-to-ico/png-to-ico.md](png-to-ico/png-to-ico.md)
 
 **快速启动：**
+
 ```bash
 # 直接在浏览器中打开
 open png-to-ico/png-to-ico.html
@@ -54,6 +58,7 @@ open png-to-ico/png-to-ico.html
 基于 CNN 卷积神经网络训练的 AI 模型，实现手写数字识别功能。
 
 **主要功能：**
+
 - 使用 CNN 卷积神经网络模型
 - 在 MNIST 数据集上训练（99.5%+ 准确率）
 - 实时预测和置信度概率显示
@@ -63,24 +68,50 @@ open png-to-ico/png-to-ico.html
 **技术栈：** HTML5, CSS3, JavaScript (ES6+), TensorFlow.js, CNN
 
 **快速启动：**
+
 ```bash
 # 直接在浏览器中打开
 open handwriting-digit-recognition/index.html
 ```
 
+### 在线录屏工具 - 屏幕录制工具
+
+简单易用的浏览器录屏工具，无需安装任何插件，直接在浏览器中录制屏幕并下载视频。
+
+**主要功能：**
+
+- 纯前端录制，无需上传文件
+- 支持选择屏幕、窗口或标签页
+- 实时预览录制画面
+- 支持暂停/继续录制
+- 一键下载 WebM 格式视频
+- 支持快捷键操作（Ctrl+R 开始、Ctrl+S 停止、空格暂停）
+
+**技术栈：** HTML5, CSS3, JavaScript (ES6+), MediaRecorder API, Screen Capture API, WebRTC
+
+**快速启动：**
+
+```bash
+# 直接在浏览器中打开
+open recording-screen/index.html
+```
+
 ## 项目特点
 
 ### 隐私保护
+
 - 所有转换均在浏览器本地完成
 - 不上传任何文件到外部服务器
 - 数据完全由用户控制
 
 ### 纯前端实现
+
 - 无需后端服务器
 - 无需安装任何软件
 - 跨平台支持（Windows, Mac, Linux）
 
 ### 现代化技术
+
 - 使用最新的 Web 标准和 API
 - 响应式设计，适配移动端
 - 优雅的用户界面和交互体验
@@ -88,12 +119,14 @@ open handwriting-digit-recognition/index.html
 ## 系统要求
 
 ### 浏览器支持
+
 - Chrome 90+
 - Edge 90+
 - Firefox 88+
 - Safari 15+
 
 ### 技术要求
+
 - 支持 WebGL 2.0（MP4 to GIF 工具）
 - 支持 SharedArrayBuffer（MP4 to GIF 工具）
 - 建议使用现代浏览器的最新版本
@@ -101,6 +134,7 @@ open handwriting-digit-recognition/index.html
 ## 安装和使用
 
 ### 克隆项目
+
 ```bash
 git clone https://github.com/codeniu/tools.git
 cd tools
@@ -111,6 +145,7 @@ cd tools
 直接在浏览器中打开 `index.html` 文件，查看所有可用工具并访问。
 
 ### 使用 MP4 to GIF 工具
+
 ```bash
 cd mp4-to-gif
 
@@ -123,15 +158,9 @@ start-node-server.bat
 
 然后访问 `http://localhost:8080/mp4-to-gif.html`
 
-### 使用 PNG to ICO 工具
-直接在浏览器中打开 `png-to-ico/png-to-ico.html` 文件即可使用。
-
-### 使用手写数字识别工具
-直接在浏览器中打开 `handwriting-digit-recognition/index.html` 文件即可使用。
-
 ## 项目结构
 
-```
+```text
 tools/
 ├── mp4-to-gif/                      # MP4 转 GIF 工具
 │   ├── mp4-to-gif.html              # 主页面
@@ -148,6 +177,9 @@ tools/
 │   ├── index.html                   # 主页面
 │   └── model/                       # TensorFlow.js 模型文件
 │
+├── recording-screen/                # 在线录屏工具
+│   └── index.html                   # 主页面
+│
 ├── index.html                       # 工具集合首页
 └── README.md                        # 项目介绍（本文件）
 ```
@@ -155,6 +187,12 @@ tools/
 ## 开发计划
 
 欢迎贡献代码和建议！未来计划添加更多实用的转换工具。
+
+- [x] 在线录屏工具
+- [ ] 抽奖工具
+- [ ] 图片分割
+- [ ] 图片拼接
+- [ ] gif 分割
 
 ## 许可证
 

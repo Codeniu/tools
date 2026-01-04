@@ -6,7 +6,7 @@
     <title>Web Tools Collection - 在线工具集合</title>
     <meta
       name="description"
-      content="免费的在线工具集合，包括 MP4 转 GIF、PNG 转 ICO、手写数字识别等，纯前端实现，保护隐私"
+      content="免费的在线工具集合，包括 MP4 转 GIF、PNG 转 ICO、手写数字识别、在线录屏等，纯前端实现，保护隐私"
     />
     <link
       rel="icon"
@@ -96,6 +96,10 @@
 
       .tool-card:nth-child(3) {
         animation-delay: 0.3s;
+      }
+
+      .tool-card:nth-child(4) {
+        animation-delay: 0.4s;
       }
 
       .tool-card:hover {
@@ -359,6 +363,29 @@
             <span class="tech-tag">TensorFlow.js</span>
             <span class="tech-tag">CNN</span>
             <span class="tech-tag">深度学习</span>
+          </div>
+        </div>
+
+        <!-- 在线录屏工具卡片 -->
+        <div class="tool-card">
+          <span class="tool-icon">🎬</span>
+          <span class="badge" style="background: #fff3e0; color: #e65100">实用工具</span>
+          <h2>在线录屏工具</h2>
+          <p>简单易用的浏览器录屏工具，无需安装任何插件，直接在浏览器中录制屏幕并下载视频。</p>
+          <ul class="features-list">
+            <li>纯前端录制，无需上传文件</li>
+            <li>支持选择屏幕、窗口或标签页</li>
+            <li>实时预览录制画面</li>
+            <li>支持暂停/继续录制</li>
+            <li>一键下载 WebM 格式视频</li>
+          </ul>
+          <a href="./recording-screen/index.html" class="tool-link"
+            >立即使用 →</a
+          >
+          <div class="tech-stack">
+            <span class="tech-tag">MediaRecorder API</span>
+            <span class="tech-tag">Screen Capture API</span>
+            <span class="tech-tag">WebRTC</span>
           </div>
         </div>
       </div>
