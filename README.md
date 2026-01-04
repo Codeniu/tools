@@ -146,6 +146,31 @@ open lucky-draw/index.html
 open image-splitter/index.html
 ```
 
+### 图片拼接工具 - Image Merger
+
+简单高效的图片拼接工具，将多张图片拼接成一张大图，支持水平和垂直两种拼接方式。
+
+**主要功能：**
+
+- 支持水平拼接（垂直排列）和垂直拼接（水平排列）
+- 支持批量上传和拖拽上传
+- 可调整图片拼接顺序（上移/下移）
+- 自定义图片间距（0-100 像素）
+- 自定义背景颜色
+- 多种输出格式（PNG/JPEG/WebP）
+- 完全本地处理，无需上传
+
+**技术栈：** HTML5, CSS3, JavaScript (ES6+), Canvas API, File API, Blob API
+
+**使用说明：** 查看 [image-merger/README.md](image-merger/README.md)
+
+**快速启动：**
+
+```bash
+# 直接在浏览器中打开
+open image-merger/index.html
+```
+
 ## 项目特点
 
 ### 隐私保护
@@ -238,6 +263,10 @@ tools/
 │   ├── index.html                   # 主页面
 │   └── README.md                    # 使用说明
 │
+├── image-merger/                    # 图片拼接工具
+│   ├── index.html                   # 主页面
+│   └── README.md                    # 使用说明
+│
 ├── index.html                       # 工具集合首页
 └── README.md                        # 项目介绍（本文件）
 ```
@@ -249,7 +278,7 @@ tools/
 - [x] 在线录屏工具
 - [x] 抽奖工具
 - [x] 图片分割
-- [ ] 图片拼接
+- [x] 图片拼接
 - [ ] gif 分割
 
 ## 许可证
