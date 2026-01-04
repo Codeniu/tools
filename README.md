@@ -39,7 +39,7 @@ node server.js
 - 实时预览转换效果
 - 批量转换支持，多尺寸自动打包为 ZIP
 
-**技术栈：** HTML5, CSS3, JavaScript (ES6+)
+**技术栈：** HTML5, CSS3, JavaScript (ES6+), Canvas API, JSZip
 
 **使用说明：** 查看 [png-to-ico/png-to-ico.md](png-to-ico/png-to-ico.md)
 
@@ -47,6 +47,25 @@ node server.js
 ```bash
 # 直接在浏览器中打开
 open png-to-ico/png-to-ico.html
+```
+
+### 手写数字识别 - AI 深度学习工具
+
+基于 CNN 卷积神经网络训练的 AI 模型，实现手写数字识别功能。
+
+**主要功能：**
+- 使用 CNN 卷积神经网络模型
+- 在 MNIST 数据集上训练（99.5%+ 准确率）
+- 实时预测和置信度概率显示
+- 完全离线运行，无需网络请求
+- 支持鼠标和触摸屏操作
+
+**技术栈：** HTML5, CSS3, JavaScript (ES6+), TensorFlow.js, CNN
+
+**快速启动：**
+```bash
+# 直接在浏览器中打开
+open handwriting-digit-recognition/index.html
 ```
 
 ## 项目特点
@@ -83,9 +102,13 @@ open png-to-ico/png-to-ico.html
 
 ### 克隆项目
 ```bash
-git clone https://github.com/yourusername/tools.git
+git clone https://github.com/codeniu/tools.git
 cd tools
 ```
+
+### 使用工具集合首页
+
+直接在浏览器中打开 `index.html` 文件，查看所有可用工具并访问。
 
 ### 使用 MP4 to GIF 工具
 ```bash
@@ -103,22 +126,30 @@ start-node-server.bat
 ### 使用 PNG to ICO 工具
 直接在浏览器中打开 `png-to-ico/png-to-ico.html` 文件即可使用。
 
+### 使用手写数字识别工具
+直接在浏览器中打开 `handwriting-digit-recognition/index.html` 文件即可使用。
+
 ## 项目结构
 
 ```
 tools/
-├── mp4-to-gif/           # MP4 转 GIF 工具
-│   ├── mp4-to-gif.html   # 主页面
-│   ├── mp4-to-gif.md     # 使用说明
-│   ├── server.js         # Node.js 服务器
+├── mp4-to-gif/                      # MP4 转 GIF 工具
+│   ├── mp4-to-gif.html              # 主页面
+│   ├── mp4-to-gif.md                # 使用说明
+│   ├── server.js                    # Node.js 服务器
 │   ├── start-node-server.bat
 │   └── start-server.sh
 │
-├── png-to-ico/           # PNG 转 ICO 工具
-│   ├── png-to-ico.html   # 主页面
-│   └── png-to-ico.md     # 使用说明
+├── png-to-ico/                      # PNG 转 ICO 工具
+│   ├── png-to-ico.html              # 主页面
+│   └── png-to-ico.md                # 使用说明
 │
-└── README.md             # 项目介绍（本文件）
+├── handwriting-digit-recognition/   # 手写数字识别工具
+│   ├── index.html                   # 主页面
+│   └── model/                       # TensorFlow.js 模型文件
+│
+├── index.html                       # 工具集合首页
+└── README.md                        # 项目介绍（本文件）
 ```
 
 ## 开发计划
