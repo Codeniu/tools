@@ -96,6 +96,56 @@ open handwriting-digit-recognition/index.html
 open recording-screen/index.html
 ```
 
+### 在线抽奖工具 - Lucky Draw
+
+简单、公平、有趣的在线抽奖系统，完全运行在浏览器中，无需安装任何软件。
+
+**主要功能：**
+
+- 完全随机抽取，确保公平性
+- 支持批量导入参与名单
+- 可自定义中奖人数和抽奖参数
+- 已中奖人员不会重复中奖
+- 数据本地存储，刷新不丢失
+- 支持导出中奖结果为 TXT 文件
+- 丰富的视觉效果（数字滚动、彩带庆祝）
+
+**技术栈：** HTML5, CSS3, JavaScript (ES6+), LocalStorage API, Canvas API
+
+**使用说明：** 查看 [lucky-draw/README.md](lucky-draw/README.md)
+
+**快速启动：**
+
+```bash
+# 直接在浏览器中打开
+open lucky-draw/index.html
+```
+
+### 图片分割工具 - Image Splitter
+
+简单高效的图片分割工具，将图片按网格分割成多个小图片，纯前端实现，保护隐私。
+
+**主要功能：**
+
+- 支持网格均匀分割（1-20 行 × 1-20 列）
+- 支持拖拽上传和点击上传
+- 多种输出格式（PNG/JPEG/WebP）
+- 支持质量调节（JPEG/WebP）
+- 实时预览和详细信息显示
+- 支持单个下载或批量下载
+- 完全本地处理，无需上传
+
+**技术栈：** HTML5, CSS3, JavaScript (ES6+), Canvas API, File API, Blob API
+
+**使用说明：** 查看 [image-splitter/README.md](image-splitter/README.md)
+
+**快速启动：**
+
+```bash
+# 直接在浏览器中打开
+open image-splitter/index.html
+```
+
 ## 项目特点
 
 ### 隐私保护
@@ -180,6 +230,14 @@ tools/
 ├── recording-screen/                # 在线录屏工具
 │   └── index.html                   # 主页面
 │
+├── lucky-draw/                      # 在线抽奖工具
+│   ├── index.html                   # 主页面
+│   └── README.md                    # 使用说明
+│
+├── image-splitter/                  # 图片分割工具
+│   ├── index.html                   # 主页面
+│   └── README.md                    # 使用说明
+│
 ├── index.html                       # 工具集合首页
 └── README.md                        # 项目介绍（本文件）
 ```
@@ -189,8 +247,8 @@ tools/
 欢迎贡献代码和建议！未来计划添加更多实用的转换工具。
 
 - [x] 在线录屏工具
-- [ ] 抽奖工具
-- [ ] 图片分割
+- [x] 抽奖工具
+- [x] 图片分割
 - [ ] 图片拼接
 - [ ] gif 分割
 

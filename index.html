@@ -102,6 +102,14 @@
         animation-delay: 0.4s;
       }
 
+      .tool-card:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+
+      .tool-card:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+
       .tool-card:hover {
         transform: translateY(-10px);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -386,6 +394,52 @@
             <span class="tech-tag">MediaRecorder API</span>
             <span class="tech-tag">Screen Capture API</span>
             <span class="tech-tag">WebRTC</span>
+          </div>
+        </div>
+
+        <!-- 在线抽奖工具卡片 -->
+        <div class="tool-card">
+          <span class="tool-icon">🎰</span>
+          <span class="badge" style="background: #fce4ec; color: #c2185b">趣味工具</span>
+          <h2>在线抽奖工具</h2>
+          <p>简单、公平、有趣的在线抽奖系统，支持自定义中奖人数和抽奖速度，完美适配各种活动场景。</p>
+          <ul class="features-list">
+            <li>完全随机抽取，确保公平性</li>
+            <li>支持批量导入参与名单</li>
+            <li>已中奖人员不会重复中奖</li>
+            <li>数据本地存储，刷新不丢失</li>
+            <li>支持导出中奖结果为文件</li>
+          </ul>
+          <a href="./lucky-draw/index.html" class="tool-link"
+            >立即使用 →</a
+          >
+          <div class="tech-stack">
+            <span class="tech-tag">ES6+</span>
+            <span class="tech-tag">LocalStorage</span>
+            <span class="tech-tag">Canvas API</span>
+          </div>
+        </div>
+
+        <!-- 图片分割工具卡片 -->
+        <div class="tool-card">
+          <span class="tool-icon">🖼️</span>
+          <span class="badge" style="background: #e8f5e9; color: #2e7d32">图片工具</span>
+          <h2>图片分割工具</h2>
+          <p>简单高效的图片分割工具，将图片按网格分割成多个小图片，支持九宫格、拼图等多种分割方式。</p>
+          <ul class="features-list">
+            <li>支持网格均匀分割（1-20行×1-20列）</li>
+            <li>支持拖拽上传和点击上传</li>
+            <li>多种输出格式（PNG/JPEG/WebP）</li>
+            <li>支持批量下载所有分割图片</li>
+            <li>完全本地处理，保护隐私</li>
+          </ul>
+          <a href="./image-splitter/index.html" class="tool-link"
+            >立即使用 →</a
+          >
+          <div class="tech-stack">
+            <span class="tech-tag">Canvas API</span>
+            <span class="tech-tag">File API</span>
+            <span class="tech-tag">Blob API</span>
           </div>
         </div>
       </div>
