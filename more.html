@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>所有工具 - Web Tools Collection</title>
+    <meta
+      name="description"
+      content="查看所有在线工具，包括格式转换、AI识别、图片处理等多种实用功能"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>"
+    />
+    <link rel="stylesheet" href="./css/common.css" />
+    <style>
+      body {
+        padding: 30px 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+      }
+
+      header {
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+      }
+
+      .back-link {
+        display: inline-block;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .back-link:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      /* 筛选区域 */
+      .filter-section {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        animation: fadeInUp 0.6s ease;
+      }
+
+      .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .filter-title {
+        font-size: 1.3rem;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .filter-search {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        min-width: 250px;
+        max-width: 500px;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 25px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      .search-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .filter-categories {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .category-btn {
+        padding: 10px 20px;
+        border: 2px solid #e0e0e0;
+        background: white;
+        border-radius: 25px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        color: #666;
+      }
+
+      .category-btn:hover {
+        border-color: #667eea;
+        color: #667eea;
+      }
+
+      .category-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+      }
+
+      .tools-count {
+        text-align: center;
+        color: #666;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+      }
+
+      .tools-count strong {
+        color: #667eea;
+        font-weight: 600;
+      }
+
+      .no-results {
+        text-align: center;
+        color: white;
+        padding: 60px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      .no-results h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+
+      .no-results p {
+        opacity: 0.9;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .filter-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .filter-search {
+          max-width: none;
+        }
+
+        .filter-categories {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>所有工具</h1>
+        <p class="subtitle">
+          浏览所有在线工具，使用分类和搜索功能快速找到您需要的工具
+        </p>
+        <a href="index.html" class="back-link">← 返回首页</a>
+      </header>
+
+      <div class="filter-section">
+        <div class="filter-header">
+          <div class="filter-title">📂 分类筛选</div>
+          <div class="filter-search">
+            <input
+              type="text"
+              id="searchInput"
+              class="search-input"
+              placeholder="搜索工具名称、功能或技术栈..."
+            />
+          </div>
+        </div>
+        <div class="filter-categories" id="categoryFilters"></div>
+        <div class="tools-count" id="toolsCount"></div>
+      </div>
+
+      <div class="tools-grid" id="toolsGrid"></div>
+      <div class="no-results" id="noResults" style="display: none">
+        <h3>未找到匹配的工具</h3>
+        <p>请尝试其他关键词或选择不同的分类</p>
+      </div>
+
+      <footer>
+        <p>所有工具均在浏览器本地运行，不会上传您的任何文件到服务器</p>
+        <p>
+          <a href="./README.md">查看文档</a> ·
+          <a href="https://github.com/codeniu/tools" target="_blank">GitHub</a>
+        </p>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8">
+          Made with ❤️ | Web Tools Collection
+        </p>
+      </footer>
+    </div>
+
+    <script src="./js/tools.js"></script>
+    <script>
+      let currentCategory = 'all';
+      let searchQuery = '';
+
+      // 渲染工具卡片
+      function renderTools() {
+        const grid = document.getElementById('toolsGrid');
+        const noResults = document.getElementById('noResults');
+        const countEl = document.getElementById('toolsCount');
+
+        // 筛选工具
+        const filteredTools = filterTools(currentCategory, searchQuery);
+
+        // 更新计数
+        countEl.innerHTML = `显示 <strong>${filteredTools.length}</strong> 个工具，共 <strong>${toolsData.length}</strong> 个`;
+
+        // 渲染或显示无结果
+        if (filteredTools.length === 0) {
+          grid.style.display = 'none';
+          noResults.style.display = 'block';
+        } else {
+          grid.style.display = 'grid';
+          noResults.style.display = 'none';
+          grid.innerHTML = filteredTools.map((tool) => createToolCard(tool)).join('');
+        }
+      }
+
+      // 创建分类筛选按钮
+      function createCategoryFilters() {
+        const container = document.getElementById('categoryFilters');
+        const categories = getCategories();
+
+        container.innerHTML = categories
+          .map(
+            (cat) => `
+            <button
+              class="category-btn ${cat.id === 'all' ? 'active' : ''}"
+              data-category="${cat.id}"
+            >
+              ${cat.name}
+            </button>
+          `
+          )
+          .join('');
+
+        // 绑定事件
+        container.querySelectorAll('.category-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const category = btn.dataset.category;
+            currentCategory = category;
+
+            // 更新按钮状态
+            container.querySelectorAll('.category-btn').forEach((b) => {
+              b.classList.toggle('active', b.dataset.category === category);
+            });
+
+            renderTools();
+          });
+        });
+      }
+
+      // 搜索功能
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderTools();
+      });
+
+      // 初始化
+      createCategoryFilters();
+      renderTools();
+    </script>
+  </body>
+</html>

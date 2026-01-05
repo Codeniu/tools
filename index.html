@@ -12,275 +12,460 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>"
     />
+    <link rel="stylesheet" href="./css/common.css" />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
         min-height: 100vh;
-        padding: 40px 20px;
-        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
       }
 
       .container {
-        max-width: 1200px;
-        margin: 0 auto;
+        max-width: 1400px;
+        padding: 0;
+        flex: 1;
       }
 
       header {
+        margin-bottom: 30px;
         text-align: center;
-        color: white;
-        margin-bottom: 60px;
-        animation: fadeInDown 0.8s ease;
       }
 
       h1 {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        font-weight: 700;
       }
 
       .subtitle {
-        font-size: 1.2rem;
+        font-size: 1rem;
+        margin-bottom: 15px;
         opacity: 0.95;
-        max-width: 600px;
-        margin: 0 auto;
       }
 
       .features {
-        display: flex;
+        gap: 12px;
+        margin-top: 15px;
         justify-content: center;
-        gap: 30px;
-        margin-top: 30px;
-        flex-wrap: wrap;
       }
 
       .feature {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 10px 20px;
-        border-radius: 25px;
-        font-size: 0.95rem;
-        backdrop-filter: blur(10px);
+        padding: 6px 16px;
+        font-size: 0.8rem;
       }
 
-      .tools-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 30px;
-        margin-bottom: 60px;
+      /* Element Plus 风格轮播容器 */
+      .el-carousel {
+        position: relative;
+        margin-bottom: 30px;
       }
 
-      .tool-card {
-        background: white;
-        border-radius: 20px;
-        padding: 35px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      .el-carousel__container {
+        position: relative;
+        overflow: hidden;
+        margin: 0 60px;
+        box-sizing: border-box;
+      }
+
+      /* 轮播轨道 - 横向滚动 */
+      .el-carousel__track {
+        display: flex;
+        height: 100%;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      /* 轮播项目 */
+      .el-carousel__item {
+        flex: 0 0 auto;
+        width: calc(100% / 3);
+        height: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      /* 轮播内容 */
+      .carousel-item-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* 轮播箭头 */
+      .el-carousel__arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.95);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #667eea;
         transition: all 0.3s ease;
-        animation: fadeInUp 0.8s ease;
-        animation-fill-mode: both;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10;
       }
 
-      .tool-card:nth-child(1) {
-        animation-delay: 0.1s;
+      .el-carousel__arrow:hover {
+        background: white;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        transform: translateY(-50%) scale(1.1);
       }
 
-      .tool-card:nth-child(2) {
-        animation-delay: 0.2s;
+      .el-carousel__arrow--left {
+        left: 0;
       }
 
-      .tool-card:nth-child(3) {
-        animation-delay: 0.3s;
+      .el-carousel__arrow--right {
+        right: 0;
       }
 
-      .tool-card:nth-child(4) {
-        animation-delay: 0.4s;
+      .el-carousel__arrow:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        transform: translateY(-50%) scale(1);
       }
 
-      .tool-card:nth-child(5) {
-        animation-delay: 0.5s;
+      /* 轮播指示器 */
+      .el-carousel__indicators {
+        position: absolute;
+        bottom: -45px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 10;
       }
 
-      .tool-card:nth-child(6) {
-        animation-delay: 0.6s;
+      .el-carousel__indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.4);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0;
       }
 
-      .tool-card:nth-child(7) {
-        animation-delay: 0.7s;
+      .el-carousel__indicator:hover {
+        background: rgba(255, 255, 255, 0.7);
       }
 
-      .tool-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      .el-carousel__indicator.is-active {
+        width: 24px;
+        border-radius: 5px;
+        background: white;
+      }
+
+      /* 工具卡片调整 - 科技感设计 */
+      .tool-card {
+        padding: 28px;
+        border-radius: 16px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        position: relative;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        overflow: hidden;
+      }
+
+      /* 科技感装饰线 */
+      .tool-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .tool-card:hover::before {
+        opacity: 1;
+      }
+
+      /* 科技感网格背景 */
+      .tool-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(
+            rgba(102, 126, 234, 0.03) 1px,
+            transparent 1px
+          ),
+          linear-gradient(90deg, rgba(102, 126, 234, 0.03) 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+
+      .tool-card:hover::after {
+        opacity: 1;
       }
 
       .tool-icon {
-        font-size: 4rem;
-        margin-bottom: 20px;
-        display: block;
+        font-size: 3rem;
+        margin-bottom: 16px;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.2));
+        transition: transform 0.3s ease;
+      }
+
+      .tool-card:hover .tool-icon {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      .badge {
+        padding: 5px 12px;
+        font-size: 0.7rem;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.1) 0%,
+          rgba(118, 75, 162, 0.1) 100%
+        );
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        font-weight: 600;
+        letter-spacing: 0.5px;
       }
 
       .tool-card h2 {
-        color: #333;
-        font-size: 1.8rem;
-        margin-bottom: 15px;
+        font-size: 1.25rem;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
       }
 
       .tool-card p {
-        color: #666;
-        margin-bottom: 20px;
-        line-height: 1.7;
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+        line-height: 1.6;
+        flex: 0 0 auto;
+        position: relative;
+        z-index: 1;
+        color: #555;
       }
 
       .features-list {
-        list-style: none;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
+        flex: 1 1 auto;
+        position: relative;
+        z-index: 1;
       }
 
       .features-list li {
-        color: #555;
-        padding: 8px 0;
-        padding-left: 25px;
+        padding: 5px 0;
+        padding-left: 20px;
+        font-size: 0.85rem;
+        line-height: 1.5;
         position: relative;
+        color: #666;
+        transition: color 0.3s ease;
       }
 
       .features-list li:before {
-        content: '✓';
+        content: '▹';
         position: absolute;
         left: 0;
         color: #667eea;
         font-weight: bold;
+        font-size: 1rem;
+      }
+
+      .tool-card:hover .features-list li {
+        color: #333;
       }
 
       .tool-link {
-        display: inline-block;
-        padding: 12px 30px;
+        padding: 12px 28px;
+        font-size: 0.95rem;
+        margin-top: 8px;
+        position: relative;
+        z-index: 1;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        text-decoration: none;
-        border-radius: 25px;
-        font-weight: 600;
+        border: none;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
       }
 
       .tool-link:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-      }
-
-      .badge {
-        display: inline-block;
-        background: #e8f5e9;
-        color: #2e7d32;
-        padding: 5px 12px;
-        border-radius: 15px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 15px;
-      }
-
-      footer {
-        text-align: center;
-        color: white;
-        padding: 40px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-      }
-
-      footer p {
-        opacity: 0.9;
-        margin-bottom: 10px;
-      }
-
-      footer a {
-        color: white;
-        text-decoration: underline;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
       }
 
       .tech-stack {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #eee;
+        margin-top: 16px;
+        padding-top: 16px;
+        position: relative;
+        z-index: 1;
+        border-top: 1px solid rgba(102, 126, 234, 0.1);
       }
 
       .tech-tag {
+        padding: 5px 12px;
+        font-size: 0.7rem;
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.08) 0%,
+          rgba(118, 75, 162, 0.08) 100%
+        );
+        border: 1px solid rgba(102, 126, 234, 0.15);
+        color: #667eea;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .tech-tag:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.15) 0%,
+          rgba(118, 75, 162, 0.15) 100%
+        );
+        border-color: rgba(102, 126, 234, 0.3);
+      }
+
+      .more-tools-link {
+        text-align: center;
+        margin-bottom: 25px;
+        margin-top: 75px;
+      }
+
+      .more-tools-link a {
         display: inline-block;
-        background: #f5f5f5;
-        color: #666;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        margin-right: 5px;
-        margin-bottom: 5px;
+        padding: 12px 35px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        text-decoration: none;
+        border-radius: 28px;
+        font-size: 1rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.3);
       }
 
-      @keyframes fadeInDown {
-        from {
-          opacity: 0;
-          transform: translateY(-30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @media (max-width: 768px) {
-        h1 {
-          font-size: 2rem;
-        }
-
-        .subtitle {
-          font-size: 1rem;
-        }
-
-        .tools-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .features {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .tool-card {
-          padding: 25px;
-        }
+      .more-tools-link a:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
       }
 
       .coming-soon {
         text-align: center;
         color: white;
-        padding: 40px;
+        padding: 20px;
         background: rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
+        border-radius: 12px;
         backdrop-filter: blur(10px);
-        margin-top: 40px;
+        margin-bottom: 20px;
       }
 
       .coming-soon h3 {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
+        font-size: 1.1rem;
+        margin-bottom: 8px;
       }
 
       .coming-soon p {
+        font-size: 0.85rem;
         opacity: 0.9;
+      }
+
+      footer {
+        padding: 20px 0;
+        margin-top: 20px;
+      }
+
+      footer p {
+        font-size: 0.85rem;
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 1200px) {
+        .el-carousel__item {
+          width: 50%;
+        }
+
+        .el-carousel__container {
+          height: 500px;
+          padding: 0 55px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 15px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .subtitle {
+          font-size: 0.95rem;
+        }
+
+        .el-carousel__item {
+          width: 100%;
+        }
+
+        .el-carousel__container {
+          height: 520px;
+          padding: 0 50px;
+        }
+
+        .el-carousel__arrow {
+          width: 40px;
+          height: 40px;
+          font-size: 18px;
+        }
+
+        .el-carousel__arrow--left {
+          left: 0;
+        }
+
+        .el-carousel__arrow--right {
+          right: 0;
+        }
+
+        .tool-card {
+          padding: 24px;
+        }
+
+        .tool-icon {
+          font-size: 2.8rem;
+        }
+
+        .el-carousel__indicators {
+          bottom: -40px;
+        }
       }
     </style>
   </head>
@@ -299,178 +484,28 @@
         </div>
       </header>
 
-      <div class="tools-grid">
-        <!-- MP4 to GIF 工具卡片 -->
-        <div class="tool-card">
-          <span class="tool-icon">🎬</span>
-          <span class="badge">热门工具</span>
-          <h2>MP4 转 GIF</h2>
-          <p>
-            将 MP4 视频转换为 GIF 动图，支持自定义参数调整，实时预览转换效果。
-          </p>
-          <ul class="features-list">
-            <li>纯前端转换，无需上传文件</li>
-            <li>可调节起始时间、持续时长</li>
-            <li>支持自定义帧率和尺寸</li>
-            <li>实时预览和进度显示</li>
-            <li>基于 FFmpeg WASM 技术</li>
-          </ul>
-          <a href="./mp4-to-gif/mp4-to-gif.html" class="tool-link"
-            >立即使用 →</a
-          >
-          <div class="tech-stack">
-            <span class="tech-tag">FFmpeg WASM</span>
-            <span class="tech-tag">HTML5</span>
-            <span class="tech-tag">ES6+</span>
-          </div>
+      <!-- Element Plus 风格轮播 -->
+      <div class="el-carousel">
+        <div class="el-carousel__container">
+          <div class="el-carousel__track" id="carouselTrack"></div>
         </div>
+        <button
+          class="el-carousel__arrow el-carousel__arrow--left"
+          id="prevBtn"
+        >
+          ‹
+        </button>
+        <button
+          class="el-carousel__arrow el-carousel__arrow--right"
+          id="nextBtn"
+        >
+          ›
+        </button>
+        <div class="el-carousel__indicators" id="carouselIndicators"></div>
+      </div>
 
-        <!-- PNG to ICO 工具卡片 -->
-        <div class="tool-card">
-          <span class="tool-icon">🖼️</span>
-          <span class="badge">常用工具</span>
-          <h2>PNG 转 ICO</h2>
-          <p>
-            将 PNG/JPG 等图片格式转换为 ICO 图标文件，支持多种尺寸批量转换。
-          </p>
-          <ul class="features-list">
-            <li>支持 PNG、JPG、JPEG、BMP 格式</li>
-            <li>多尺寸选择（16x16 到 256x256）</li>
-            <li>实时预览转换效果</li>
-            <li>批量转换自动打包 ZIP</li>
-            <li>符合 ICO 文件格式规范</li>
-          </ul>
-          <a href="./png-to-ico/png-to-ico.html" class="tool-link"
-            >立即使用 →</a
-          >
-          <div class="tech-stack">
-            <span class="tech-tag">Canvas API</span>
-            <span class="tech-tag">Blob API</span>
-            <span class="tech-tag">JSZip</span>
-          </div>
-        </div>
-
-        <!-- 手写数字识别工具卡片 -->
-        <div class="tool-card">
-          <span class="tool-icon">✍️</span>
-          <span class="badge" style="background: #e3f2fd; color: #1565c0"
-            >AI 深度学习</span
-          >
-          <h2>手写数字识别</h2>
-          <p>基于 CNN 卷积神经网络训练的 AI 模型，在画板上手写数字，实时高精度识别。</p>
-          <ul class="features-list">
-            <li>使用 CNN 卷积神经网络模型</li>
-            <li>在 MNIST 数据集上训练（99.5%+ 准确率）</li>
-            <li>实时预测和置信度概率显示</li>
-            <li>完全离线运行，无需网络请求</li>
-            <li>支持鼠标和触摸屏操作</li>
-          </ul>
-          <a
-            href="./handwriting-digit-recognition/index.html"
-            class="tool-link"
-          >
-            立即使用 →
-          </a>
-          <div class="tech-stack">
-            <span class="tech-tag">TensorFlow.js</span>
-            <span class="tech-tag">CNN</span>
-            <span class="tech-tag">深度学习</span>
-          </div>
-        </div>
-
-        <!-- 在线录屏工具卡片 -->
-        <div class="tool-card">
-          <span class="tool-icon">🎬</span>
-          <span class="badge" style="background: #fff3e0; color: #e65100">实用工具</span>
-          <h2>在线录屏工具</h2>
-          <p>简单易用的浏览器录屏工具，无需安装任何插件，直接在浏览器中录制屏幕并下载视频。</p>
-          <ul class="features-list">
-            <li>纯前端录制，无需上传文件</li>
-            <li>支持选择屏幕、窗口或标签页</li>
-            <li>实时预览录制画面</li>
-            <li>支持暂停/继续录制</li>
-            <li>一键下载 WebM 格式视频</li>
-          </ul>
-          <a href="./recording-screen/index.html" class="tool-link"
-            >立即使用 →</a
-          >
-          <div class="tech-stack">
-            <span class="tech-tag">MediaRecorder API</span>
-            <span class="tech-tag">Screen Capture API</span>
-            <span class="tech-tag">WebRTC</span>
-          </div>
-        </div>
-
-        <!-- 在线抽奖工具卡片 -->
-        <div class="tool-card">
-          <span class="tool-icon">🎰</span>
-          <span class="badge" style="background: #fce4ec; color: #c2185b">趣味工具</span>
-          <h2>在线抽奖工具</h2>
-          <p>简单、公平、有趣的在线抽奖系统，支持自定义中奖人数和抽奖速度，完美适配各种活动场景。</p>
-          <ul class="features-list">
-            <li>完全随机抽取，确保公平性</li>
-            <li>支持批量导入参与名单</li>
-            <li>已中奖人员不会重复中奖</li>
-            <li>数据本地存储，刷新不丢失</li>
-            <li>支持导出中奖结果为文件</li>
-          </ul>
-          <a href="./lucky-draw/index.html" class="tool-link"
-            >立即使用 →</a
-          >
-          <div class="tech-stack">
-            <span class="tech-tag">ES6+</span>
-            <span class="tech-tag">LocalStorage</span>
-            <span class="tech-tag">Canvas API</span>
-          </div>
-        </div>
-
-        <!-- 图片分割工具卡片 -->
-        <div class="tool-card">
-          <span class="tool-icon">🖼️</span>
-          <span class="badge" style="background: #e8f5e9; color: #2e7d32">图片工具</span>
-          <h2>图片分割工具</h2>
-          <p>简单高效的图片分割工具，将图片按网格分割成多个小图片，支持九宫格、拼图等多种分割方式。</p>
-          <ul class="features-list">
-            <li>支持网格均匀分割（1-20行×1-20列）</li>
-            <li>支持拖拽上传和点击上传</li>
-            <li>多种输出格式（PNG/JPEG/WebP）</li>
-            <li>支持批量下载所有分割图片</li>
-            <li>完全本地处理，保护隐私</li>
-          </ul>
-          <a href="./image-splitter/index.html" class="tool-link"
-            >立即使用 →</a
-          >
-          <div class="tech-stack">
-            <span class="tech-tag">Canvas API</span>
-            <span class="tech-tag">File API</span>
-            <span class="tech-tag">Blob API</span>
-          </div>
-        </div>
-
-        <!-- 图片拼接工具卡片 -->
-        <div class="tool-card">
-          <span class="tool-icon">🔗</span>
-          <span class="badge" style="background: #fff3e0; color: #e65100">创意工具</span>
-          <h2>图片拼接工具</h2>
-          <p>智能布局模式，自由拖拽、缩放、旋转图片，类似专业设计软件的体验。</p>
-          <ul class="features-list">
-            <li>✨ 智能布局 - 自由拖拽图片到任意位置</li>
-            <li>🎯 智能吸附 - 三级吸附系统（边缘/图片/网格）</li>
-            <li>📐 拖拽缩放 - 角落控制点调整大小</li>
-            <li>🔄 旋转图片 - 0-360度自由旋转</li>
-            <li>📐 画布预设 - Full HD、Instagram、4K等</li>
-            <li>🎨 透明背景 - 支持导出透明PNG</li>
-          </ul>
-          <a href="./image-merger/index.html" class="tool-link"
-            >立即使用 →</a
-          >
-          <div class="tech-stack">
-            <span class="tech-tag">Canvas API</span>
-            <span class="tech-tag">Tailwind CSS</span>
-            <span class="tech-tag">File API</span>
-            <span class="tech-tag">Blob API</span>
-          </div>
-        </div>
+      <div class="more-tools-link">
+        <a href="more.html">查看所有工具 →</a>
       </div>
 
       <div class="coming-soon">
@@ -484,10 +519,138 @@
           <a href="./README.md">查看文档</a> ·
           <a href="https://github.com/codeniu/tools" target="_blank">GitHub</a>
         </p>
-        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8">
+        <p style="margin-top: 18px; font-size: 0.85rem; opacity: 0.8">
           Made with ❤️ | Web Tools Collection
         </p>
       </footer>
     </div>
+
+    <script src="./js/tools.js"></script>
+    <script>
+      // 轮播配置
+      const VISIBLE_CARDS = 3
+      let currentCardIndex = 0
+      let autoPlayTimer = null
+      const totalCards = toolsData.length
+      const maxCardIndex = Math.max(0, totalCards - VISIBLE_CARDS)
+
+      // 创建单个工具卡片项
+      function createCarouselItem(tool, index) {
+        return `
+          <div class="el-carousel__item" data-index="${index}">
+            <div class="carousel-item-content">
+              ${createToolCard(tool, 0)}
+            </div>
+          </div>
+        `
+      }
+
+      // 初始化轮播
+      function initCarousel() {
+        const track = document.getElementById('carouselTrack')
+        const indicators = document.getElementById('carouselIndicators')
+
+        // 创建所有工具卡片
+        toolsData.forEach((tool, index) => {
+          track.innerHTML += createCarouselItem(tool, index)
+        })
+
+        // 创建指示器 (每页一个指示器)
+        const indicatorCount = Math.ceil(totalCards / VISIBLE_CARDS)
+        for (let i = 0; i < indicatorCount; i++) {
+          const indicator = document.createElement('button')
+          indicator.className =
+            'el-carousel__indicator' + (i === 0 ? ' is-active' : '')
+          indicator.dataset.page = i
+          indicator.addEventListener('click', () => goToPage(i))
+          indicators.appendChild(indicator)
+        }
+
+        // 更新轮播状态
+        updateCarousel()
+
+        // 绑定导航事件
+        document.getElementById('prevBtn').addEventListener('click', slidePrev)
+        document.getElementById('nextBtn').addEventListener('click', slideNext)
+
+        // 启动自动播放
+        startAutoPlay()
+
+        // 鼠标悬停时暂停自动播放
+        const carousel = document.querySelector('.el-carousel')
+        carousel.addEventListener('mouseenter', stopAutoPlay)
+        carousel.addEventListener('mouseleave', startAutoPlay)
+      }
+
+      // 更新轮播状态
+      function updateCarousel() {
+        const track = document.getElementById('carouselTrack')
+        const indicators = document.querySelectorAll('.el-carousel__indicator')
+        const prevBtn = document.getElementById('prevBtn')
+        const nextBtn = document.getElementById('nextBtn')
+
+        // 移动轨道 (每次移动一个卡片的宽度)
+        const cardWidth = 100 / VISIBLE_CARDS
+        track.style.transform = `translateX(-${currentCardIndex * cardWidth}%)`
+
+        // 更新指示器
+        const currentPage = Math.floor(currentCardIndex / VISIBLE_CARDS)
+        indicators.forEach((indicator, index) => {
+          indicator.classList.toggle('is-active', index === currentPage)
+        })
+
+        // 更新按钮状态
+        prevBtn.disabled = currentCardIndex === 0
+        nextBtn.disabled = currentCardIndex >= maxCardIndex
+      }
+
+      // 向前滑动一张卡片
+      function slidePrev() {
+        if (currentCardIndex > 0) {
+          currentCardIndex--
+          updateCarousel()
+        }
+      }
+
+      // 向后滑动一张卡片
+      function slideNext() {
+        if (currentCardIndex < maxCardIndex) {
+          currentCardIndex++
+          updateCarousel()
+        }
+      }
+
+      // 跳转到指定页
+      function goToPage(pageIndex) {
+        currentCardIndex = pageIndex * VISIBLE_CARDS
+        if (currentCardIndex > maxCardIndex) {
+          currentCardIndex = maxCardIndex
+        }
+        updateCarousel()
+      }
+
+      // 自动播放
+      function startAutoPlay() {
+        stopAutoPlay()
+        autoPlayTimer = setInterval(() => {
+          if (currentCardIndex >= maxCardIndex) {
+            currentCardIndex = 0
+          } else {
+            currentCardIndex++
+          }
+          updateCarousel()
+        }, 3500)
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer)
+          autoPlayTimer = null
+        }
+      }
+
+      // 初始化
+      initCarousel()
+    </script>
   </body>
 </html>
