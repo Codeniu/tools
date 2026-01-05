@@ -129,6 +129,23 @@
                     <h3 class="text-lg font-semibold text-indigo-600 mb-3">⚙️ 画布设置</h3>
 
                     <div class="space-y-3">
+                        <!-- 常用尺寸预设 -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">常用尺寸</label>
+                            <select id="presetSize" class="w-full px-2 py-2 border-2 border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="">自定义尺寸</option>
+                                <option value="1920x1080" selected>1920×1080 (Full HD)</option>
+                                <option value="1080x1080">1080×1080 (Instagram 方形)</option>
+                                <option value="1080x1920">1080×1920 (Instagram 竖版)</option>
+                                <option value="1080x1350">1080×1350 (Instagram 横版)</option>
+                                <option value="1280x720">1280×720 (HD)</option>
+                                <option value="2560x1440">2560×1440 (2K)</option>
+                                <option value="3840x2160">3840×2160 (4K)</option>
+                                <option value="800x600">800×600 (SVGA)</option>
+                                <option value="1024x768">1024×768 (XGA)</option>
+                            </select>
+                        </div>
+
                         <!-- 画布尺寸 -->
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -146,11 +163,15 @@
                         <!-- 背景颜色 -->
                         <div>
                             <label class="block text-xs font-medium text-gray-600 mb-1">背景颜色</label>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 items-center">
                                 <input type="color" id="bgColorInput" value="#ffffff"
                                        class="w-12 h-10 rounded cursor-pointer border-2 border-gray-300">
                                 <input type="text" id="bgColorText" value="#ffffff"
                                        class="flex-1 px-3 py-2 border-2 border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                    <input type="checkbox" id="transparentBg" class="w-4 h-4 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500">
+                                    <span class="text-xs font-medium text-gray-600">透明</span>
+                                </label>
                             </div>
                         </div>
 
@@ -361,6 +382,7 @@
             width: 1920,
             height: 1080,
             bgColor: '#ffffff',
+            transparent: false,
             showGrid: true,
             snapToGrid: true
         };
@@ -427,11 +449,53 @@
             // 背景颜色同步
             document.getElementById('bgColorInput').addEventListener('input', (e) => {
                 document.getElementById('bgColorText').value = e.target.value;
+                document.getElementById('transparentBg').checked = false;
+                canvasSettings.bgColor = e.target.value;
+                canvasSettings.transparent = false;
+                render();
             });
             document.getElementById('bgColorText').addEventListener('input', (e) => {
                 if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
                     document.getElementById('bgColorInput').value = e.target.value;
+                    document.getElementById('transparentBg').checked = false;
+                    canvasSettings.bgColor = e.target.value;
+                    canvasSettings.transparent = false;
+                    render();
                 }
+            });
+
+            // 透明背景切换
+            document.getElementById('transparentBg').addEventListener('change', (e) => {
+                canvasSettings.transparent = e.target.checked;
+                if (e.target.checked) {
+                    // 禁用颜色选择器
+                    document.getElementById('bgColorInput').disabled = true;
+                    document.getElementById('bgColorText').disabled = true;
+                } else {
+                    // 启用颜色选择器
+                    document.getElementById('bgColorInput').disabled = false;
+                    document.getElementById('bgColorText').disabled = false;
+                    canvasSettings.bgColor = document.getElementById('bgColorInput').value;
+                }
+                render();
+            });
+
+            // 预设尺寸选择
+            document.getElementById('presetSize').addEventListener('change', (e) => {
+                const value = e.target.value;
+                if (value) {
+                    const [width, height] = value.split('x').map(Number);
+                    document.getElementById('canvasWidth').value = width;
+                    document.getElementById('canvasHeight').value = height;
+                }
+            });
+
+            // 尺寸输入框变化时重置预设选择
+            document.getElementById('canvasWidth').addEventListener('input', () => {
+                document.getElementById('presetSize').value = '';
+            });
+            document.getElementById('canvasHeight').addEventListener('input', () => {
+                document.getElementById('presetSize').value = '';
             });
 
             // 网格显示和吸附
@@ -601,8 +665,12 @@
         // ==================== 画布渲染 ====================
         function render() {
             // 清空画布
-            ctx.fillStyle = canvasSettings.bgColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (canvasSettings.transparent) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = canvasSettings.bgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
 
             // 绘制网格
             if (canvasSettings.showGrid) {
@@ -1089,6 +1157,7 @@
             canvasSettings.width = parseInt(document.getElementById('canvasWidth').value) || 1920;
             canvasSettings.height = parseInt(document.getElementById('canvasHeight').value) || 1080;
             canvasSettings.bgColor = document.getElementById('bgColorInput').value;
+            canvasSettings.transparent = document.getElementById('transparentBg').checked;
 
             canvas.width = canvasSettings.width;
             canvas.height = canvasSettings.height;
@@ -1102,6 +1171,7 @@
                 width: 1920,
                 height: 1080,
                 bgColor: '#ffffff',
+                transparent: false,
                 showGrid: true,
                 snapToGrid: true
             };
@@ -1110,8 +1180,12 @@
             document.getElementById('canvasHeight').value = 1080;
             document.getElementById('bgColorInput').value = '#ffffff';
             document.getElementById('bgColorText').value = '#ffffff';
+            document.getElementById('transparentBg').checked = false;
+            document.getElementById('bgColorInput').disabled = false;
+            document.getElementById('bgColorText').disabled = false;
             document.getElementById('showGrid').checked = true;
             document.getElementById('snapToGrid').checked = true;
+            document.getElementById('presetSize').value = '1920x1080';
 
             applyCanvasSettings();
         }
