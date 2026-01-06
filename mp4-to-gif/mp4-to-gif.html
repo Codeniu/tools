@@ -1,606 +1,648 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MP4 转 GIF 工具</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-            width: 100%;
-        }
+      .container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 600px;
+        width: 100%;
+      }
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 28px;
+      }
 
-        .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9ff;
-            margin-bottom: 20px;
-        }
+      .upload-area {
+        border: 3px dashed #667eea;
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f8f9ff;
+        margin-bottom: 20px;
+      }
 
-        .upload-area:hover {
-            border-color: #764ba2;
-            background: #f0f2ff;
-        }
+      .upload-area:hover {
+        border-color: #764ba2;
+        background: #f0f2ff;
+      }
 
-        .upload-area.dragover {
-            border-color: #764ba2;
-            background: #e8ebff;
-            transform: scale(1.02);
-        }
+      .upload-area.dragover {
+        border-color: #764ba2;
+        background: #e8ebff;
+        transform: scale(1.02);
+      }
 
-        .upload-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
+      .upload-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+      }
 
-        .upload-text {
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
+      .upload-text {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
 
-        .upload-hint {
-            color: #999;
-            font-size: 14px;
-        }
+      .upload-hint {
+        color: #999;
+        font-size: 14px;
+      }
 
-        #videoInput {
-            display: none;
-        }
+      #videoInput {
+        display: none;
+      }
 
-        .video-preview {
-            margin: 20px 0;
-            display: none;
-        }
+      .video-preview {
+        margin: 20px 0;
+        display: none;
+      }
 
-        video {
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
+      video {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
 
-        .controls {
-            margin: 20px 0;
-            display: none;
-        }
+      .controls {
+        margin: 20px 0;
+        display: none;
+      }
 
-        .control-group {
-            margin-bottom: 15px;
-        }
+      .control-group {
+        margin-bottom: 15px;
+      }
 
-        label {
-            display: block;
-            color: #555;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
+      label {
+        display: block;
+        color: #555;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
 
-        input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #ddd;
-            outline: none;
-            -webkit-appearance: none;
-        }
+      input[type='range'] {
+        width: 100%;
+        height: 8px;
+        border-radius: 5px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+      }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-        }
+      input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #667eea;
+        cursor: pointer;
+      }
 
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-            border: none;
-        }
+      input[type='range']::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #667eea;
+        cursor: pointer;
+        border: none;
+      }
 
-        .value-display {
-            color: #667eea;
-            font-weight: bold;
-            float: right;
-        }
+      .value-display {
+        color: #667eea;
+        font-weight: bold;
+        float: right;
+      }
 
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
+      .btn {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
 
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
+      .btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+      }
 
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+      .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
 
-        .btn-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-            display: none;
-        }
+      .btn-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        display: none;
+      }
 
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.4);
-        }
+      .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(17, 153, 142, 0.4);
+      }
 
-        .progress-container {
-            margin: 20px 0;
-            display: none;
-        }
+      .progress-container {
+        margin: 20px 0;
+        display: none;
+      }
 
-        .progress-bar {
-            width: 100%;
-            height: 30px;
-            background: #e0e0e0;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-        }
+      .progress-bar {
+        width: 100%;
+        height: 30px;
+        background: #e0e0e0;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+      }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        width: 0%;
+        transition: width 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        .progress-text {
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+      .progress-text {
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        top: 50%;
+        transform: translateY(-50%);
+      }
 
-        .result-container {
-            margin: 20px 0;
-            display: none;
-        }
+      .result-container {
+        margin: 20px 0;
+        display: none;
+      }
 
-        .result-container img {
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
+      .result-container img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
 
-        .file-info {
-            background: #f0f2ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 14px;
-            color: #555;
-            display: none;
-        }
+      .file-info {
+        background: #f0f2ff;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #555;
+        display: none;
+      }
 
-        .file-info strong {
-            color: #667eea;
-        }
+      .file-info strong {
+        color: #667eea;
+      }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
         }
+        50% {
+          opacity: 0.7;
+        }
+      }
 
-        .loading {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
+      .loading {
+        animation: pulse 1.5s ease-in-out infinite;
+      }
 
-        .error-message {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            display: none;
-        }
+      .error-message {
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        display: none;
+      }
 
-        .error-message h3 {
-            color: #856404;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
+      .error-message h3 {
+        color: #856404;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
 
-        .error-message p {
-            color: #856404;
-            margin-bottom: 10px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+      .error-message p {
+        color: #856404;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
 
-        .error-message code {
-            background: #f8f9fa;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            color: #d63384;
-        }
+      .error-message code {
+        background: #f8f9fa;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        color: #d63384;
+      }
 
-        .error-message .solution {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-        }
+      .error-message .solution {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+      }
 
-        .error-message .solution h4 {
-            color: #0c5460;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
+      .error-message .solution h4 {
+        color: #0c5460;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
 
-        .error-message .solution ol {
-            color: #0c5460;
-            margin-left: 20px;
-            font-size: 14px;
-            line-height: 1.8;
-        }
+      .error-message .solution ol {
+        color: #0c5460;
+        margin-left: 20px;
+        font-size: 14px;
+        line-height: 1.8;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>🎬 MP4 转 GIF 工具</h1>
+      <h1>🎬 MP4 转 GIF 工具</h1>
 
-        <div class="error-message" id="errorMessage">
-            <h3>⚠️ 检测到文件协议访问</h3>
-            <p>您正在使用 <code>file://</code> 协议打开此文件。由于浏览器安全策略，FFmpeg WASM 无法从本地文件系统加载外部 Worker 脚本。</p>
-            <div class="solution">
-                <h4>💡 解决方案</h4>
-                <p>请通过 HTTP 服务器运行此文件。以下是几种简单的方法：</p>
-             
-                <p><strong>使用 Node.js</strong></p>
-                <ol>
-                    <li>切换到文件所在目录</li>
-                    <li>运行命令：<code>node server.js</code></li>
-                    <li>在浏览器中访问：<code>http://localhost:8000/mp4-to-gif.html</code></li>
-                </ol>
-        
-            </div>
+      <div class="error-message" id="errorMessage">
+        <h3>⚠️ 检测到文件协议访问</h3>
+        <p>
+          您正在使用
+          <code>file://</code> 协议打开此文件。由于浏览器安全策略，FFmpeg WASM
+          无法从本地文件系统加载外部 Worker 脚本。
+        </p>
+        <div class="solution">
+          <h4>💡 解决方案</h4>
+          <p>请通过 HTTP 服务器运行此文件。以下是几种简单的方法：</p>
+
+          <p><strong>使用 Node.js</strong></p>
+          <ol>
+            <li>切换到文件所在目录</li>
+            <li>运行命令：<code>node server.js</code></li>
+            <li>
+              在浏览器中访问：<code>http://localhost:8000/mp4-to-gif.html</code>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📁</div>
+        <div class="upload-text">点击或拖拽上传 MP4 视频</div>
+        <div class="upload-hint">支持 MP4 格式视频文件</div>
+      </div>
+      <input type="file" id="videoInput" accept="video/mp4" />
+
+      <div class="file-info" id="fileInfo"></div>
+
+      <div class="video-preview" id="videoPreview">
+        <video id="video" controls></video>
+      </div>
+
+      <div class="controls" id="controls">
+        <div class="control-group">
+          <label>
+            起始时间 (秒)
+            <span class="value-display" id="startTimeValue">0s</span>
+          </label>
+          <input
+            type="range"
+            id="startTime"
+            min="0"
+            max="10"
+            value="0"
+            step="0.1"
+          />
         </div>
 
-        <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📁</div>
-            <div class="upload-text">点击或拖拽上传 MP4 视频</div>
-            <div class="upload-hint">支持 MP4 格式视频文件</div>
-        </div>
-        <input type="file" id="videoInput" accept="video/mp4">
-
-        <div class="file-info" id="fileInfo"></div>
-
-        <div class="video-preview" id="videoPreview">
-            <video id="video" controls></video>
-        </div>
-
-        <div class="controls" id="controls">
-            <div class="control-group">
-                <label>
-                    起始时间 (秒)
-                    <span class="value-display" id="startTimeValue">0s</span>
-                </label>
-                <input type="range" id="startTime" min="0" max="10" value="0" step="0.1">
-            </div>
-
-            <div class="control-group">
-                <label>
-                    持续时间 (秒)
-                    <span class="value-display" id="durationValue">5s</span>
-                </label>
-                <input type="range" id="duration" min="1" max="10" value="5" step="0.5">
-            </div>
-
-            <div class="control-group">
-                <label>
-                    帧率 (FPS)
-                    <span class="value-display" id="fpsValue">10</span>
-                </label>
-                <input type="range" id="fps" min="5" max="30" value="10" step="1">
-            </div>
-
-            <div class="control-group">
-                <label>
-                    宽度 (像素)
-                    <span class="value-display" id="widthValue">480px</span>
-                </label>
-                <input type="range" id="width" min="200" max="800" value="480" step="20">
-            </div>
-
-            <button class="btn btn-primary" id="convertBtn" disabled>
-                ⏳ 加载 FFmpeg 中...
-            </button>
+        <div class="control-group">
+          <label>
+            持续时间 (秒)
+            <span class="value-display" id="durationValue">5s</span>
+          </label>
+          <input
+            type="range"
+            id="duration"
+            min="1"
+            max="10"
+            value="5"
+            step="0.5"
+          />
         </div>
 
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-                <div class="progress-text" id="progressText">0%</div>
-            </div>
+        <div class="control-group">
+          <label>
+            帧率 (FPS)
+            <span class="value-display" id="fpsValue">10</span>
+          </label>
+          <input type="range" id="fps" min="5" max="30" value="10" step="1" />
         </div>
 
-        <div class="result-container" id="resultContainer">
-            <img id="resultGif" alt="生成的 GIF">
-            <button class="btn btn-success" id="downloadBtn">⬇️ 下载 GIF</button>
+        <div class="control-group">
+          <label>
+            宽度 (像素)
+            <span class="value-display" id="widthValue">480px</span>
+          </label>
+          <input
+            type="range"
+            id="width"
+            min="200"
+            max="800"
+            value="480"
+            step="20"
+          />
         </div>
+
+        <button class="btn btn-primary" id="convertBtn" disabled>
+          ⏳ 加载 FFmpeg 中...
+        </button>
+      </div>
+
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-text" id="progressText">0%</div>
+        </div>
+      </div>
+
+      <div class="result-container" id="resultContainer">
+        <img id="resultGif" alt="生成的 GIF" />
+        <button class="btn btn-success" id="downloadBtn">⬇️ 下载 GIF</button>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
-    <!-- <script src="./lib/ffmpeg/ffmpeg.min.js"></script> -->
     <script>
-        const { createFFmpeg, fetchFile } = FFmpeg;
+      const { createFFmpeg, fetchFile } = FFmpeg
 
-        let ffmpeg = null;
-        let videoFile = null;
-        let videoDuration = 0;
+      let ffmpeg = null
+      let videoFile = null
+      let videoDuration = 0
 
-        const uploadArea = document.getElementById('uploadArea');
-        const videoInput = document.getElementById('videoInput');
-        const video = document.getElementById('video');
-        const videoPreview = document.getElementById('videoPreview');
-        const controls = document.getElementById('controls');
-        const fileInfo = document.getElementById('fileInfo');
-        const convertBtn = document.getElementById('convertBtn');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        const resultContainer = document.getElementById('resultContainer');
-        const resultGif = document.getElementById('resultGif');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const errorMessage = document.getElementById('errorMessage');
+      const uploadArea = document.getElementById('uploadArea')
+      const videoInput = document.getElementById('videoInput')
+      const video = document.getElementById('video')
+      const videoPreview = document.getElementById('videoPreview')
+      const controls = document.getElementById('controls')
+      const fileInfo = document.getElementById('fileInfo')
+      const convertBtn = document.getElementById('convertBtn')
+      const progressContainer = document.getElementById('progressContainer')
+      const progressFill = document.getElementById('progressFill')
+      const progressText = document.getElementById('progressText')
+      const resultContainer = document.getElementById('resultContainer')
+      const resultGif = document.getElementById('resultGif')
+      const downloadBtn = document.getElementById('downloadBtn')
+      const errorMessage = document.getElementById('errorMessage')
 
-        // Range inputs
-        const startTimeInput = document.getElementById('startTime');
-        const durationInput = document.getElementById('duration');
-        const fpsInput = document.getElementById('fps');
-        const widthInput = document.getElementById('width');
+      // Range inputs
+      const startTimeInput = document.getElementById('startTime')
+      const durationInput = document.getElementById('duration')
+      const fpsInput = document.getElementById('fps')
+      const widthInput = document.getElementById('width')
 
-        // Check if running from file:// protocol
-        function checkProtocol() {
-            if (window.location.protocol === 'file:') {
-                errorMessage.style.display = 'block';
-                uploadArea.style.pointerEvents = 'none';
-                uploadArea.style.opacity = '0.5';
-                return false;
-            }
-            return true;
+      // Check if running from file:// protocol
+      function checkProtocol() {
+        if (window.location.protocol === 'file:') {
+          errorMessage.style.display = 'block'
+          uploadArea.style.pointerEvents = 'none'
+          uploadArea.style.opacity = '0.5'
+          return false
+        }
+        return true
+      }
+
+      // Initialize FFmpeg
+      async function initFFmpeg() {
+        if (!checkProtocol()) {
+          return false
         }
 
-        // Initialize FFmpeg
-        async function initFFmpeg() {
-            if (!checkProtocol()) {
-                return false;
-            }
+        if (ffmpeg) return true
 
-            if (ffmpeg) return true;
+        try {
+          ffmpeg = createFFmpeg({
+            log: true,
+            corePath:
+              'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js',
+          })
 
-            try {
-                ffmpeg = createFFmpeg({
-                    log: true,
-                    corePath: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js',
-                });
+          ffmpeg.setLogger(({ type, message }) => {
+            console.log(type, message)
+          })
 
-                ffmpeg.setLogger(({ type, message }) => {
-                    console.log(type, message);
-                });
+          ffmpeg.setProgress(({ ratio }) => {
+            const pct = Math.round(ratio * 100)
+            progressFill.style.width = pct + '%'
+            progressText.textContent = pct + '%'
+          })
 
-                ffmpeg.setProgress(({ ratio }) => {
-                    const pct = Math.round(ratio * 100);
-                    progressFill.style.width = pct + '%';
-                    progressText.textContent = pct + '%';
-                });
+          await ffmpeg.load()
 
-                await ffmpeg.load();
-
-                convertBtn.textContent = '🎬 开始转换';
-                convertBtn.disabled = false;
-                return true;
-            } catch (error) {
-                console.error('FFmpeg init error:', error);
-                convertBtn.textContent = '❌ 加载失败，请检查网络连接';
-                errorMessage.style.display = 'block';
-                errorMessage.querySelector('h3').textContent = '⚠️ FFmpeg 加载失败';
-                errorMessage.querySelector('p').innerHTML = '错误信息: ' + error.message +
-                    '<br><br>请确保：<br>1. 使用 HTTP 服务器运行（不能直接双击打开）<br>2. 网络连接正常，可以访问 CDN';
-                return false;
-            }
+          convertBtn.textContent = '🎬 开始转换'
+          convertBtn.disabled = false
+          return true
+        } catch (error) {
+          console.error('FFmpeg init error:', error)
+          convertBtn.textContent = '❌ 加载失败，请检查网络连接'
+          errorMessage.style.display = 'block'
+          errorMessage.querySelector('h3').textContent = '⚠️ FFmpeg 加载失败'
+          errorMessage.querySelector('p').innerHTML =
+            '错误信息: ' +
+            error.message +
+            '<br><br>请确保：<br>1. 使用 HTTP 服务器运行（不能直接双击打开）<br>2. 网络连接正常，可以访问 CDN'
+          return false
         }
+      }
 
-        // Event Listeners
-        uploadArea.addEventListener('click', () => videoInput.click());
+      // Event Listeners
+      uploadArea.addEventListener('click', () => videoInput.click())
 
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
+      uploadArea.addEventListener('dragover', e => {
+        e.preventDefault()
+        uploadArea.classList.add('dragover')
+      })
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover')
+      })
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0 && files[0].type === 'video/mp4') {
-                handleVideoFile(files[0]);
-            }
-        });
+      uploadArea.addEventListener('drop', e => {
+        e.preventDefault()
+        uploadArea.classList.remove('dragover')
+        const files = e.dataTransfer.files
+        if (files.length > 0 && files[0].type === 'video/mp4') {
+          handleVideoFile(files[0])
+        }
+      })
 
-        videoInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleVideoFile(e.target.files[0]);
-            }
-        });
+      videoInput.addEventListener('change', e => {
+        if (e.target.files.length > 0) {
+          handleVideoFile(e.target.files[0])
+        }
+      })
 
-        function handleVideoFile(file) {
-            videoFile = file;
-            const url = URL.createObjectURL(file);
-            video.src = url;
+      function handleVideoFile(file) {
+        videoFile = file
+        const url = URL.createObjectURL(file)
+        video.src = url
 
-            video.onloadedmetadata = () => {
-                videoDuration = video.duration;
-                startTimeInput.max = Math.max(videoDuration - 1, 1);
-                durationInput.max = Math.min(videoDuration, 10);
+        video.onloadedmetadata = () => {
+          videoDuration = video.duration
+          startTimeInput.max = Math.max(videoDuration - 1, 1)
+          durationInput.max = Math.min(videoDuration, 10)
 
-                videoPreview.style.display = 'block';
-                controls.style.display = 'block';
-                fileInfo.style.display = 'block';
-                fileInfo.innerHTML = `
+          videoPreview.style.display = 'block'
+          controls.style.display = 'block'
+          fileInfo.style.display = 'block'
+          fileInfo.innerHTML = `
                     <strong>文件名:</strong> ${file.name}<br>
-                    <strong>大小:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
+                    <strong>大小:</strong> ${(file.size / 1024 / 1024).toFixed(
+                      2
+                    )} MB<br>
                     <strong>时长:</strong> ${formatTime(videoDuration)}
-                `;
+                `
 
-                initFFmpeg();
-            };
+          initFFmpeg()
         }
+      }
 
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60)
+        const secs = Math.floor(seconds % 60)
+        return `${mins}:${secs.toString().padStart(2, '0')}`
+      }
+
+      // Range input value displays
+      startTimeInput.addEventListener('input', () => {
+        document.getElementById('startTimeValue').textContent =
+          startTimeInput.value + 's'
+      })
+
+      durationInput.addEventListener('input', () => {
+        document.getElementById('durationValue').textContent =
+          durationInput.value + 's'
+      })
+
+      fpsInput.addEventListener('input', () => {
+        document.getElementById('fpsValue').textContent = fpsInput.value
+      })
+
+      widthInput.addEventListener('input', () => {
+        document.getElementById('widthValue').textContent =
+          widthInput.value + 'px'
+      })
+
+      // Convert
+      convertBtn.addEventListener('click', async () => {
+        if (!ffmpeg || !videoFile) return
+
+        convertBtn.disabled = true
+        convertBtn.textContent = '🔄 转换中...'
+        progressContainer.style.display = 'block'
+        resultContainer.style.display = 'none'
+
+        try {
+          const startTime = parseFloat(startTimeInput.value)
+          const duration = parseFloat(durationInput.value)
+          const fps = parseInt(fpsInput.value)
+          const width = parseInt(widthInput.value)
+
+          const inputName = 'input.mp4'
+          const outputName = 'output.gif'
+
+          // Write file to virtual filesystem
+          ffmpeg.FS('writeFile', inputName, await fetchFile(videoFile))
+
+          // Run FFmpeg command
+          await ffmpeg.run(
+            '-i',
+            inputName,
+            '-ss',
+            startTime.toString(),
+            '-t',
+            duration.toString(),
+            '-vf',
+            `fps=${fps},scale=${width}:-1:flags=lanczos`,
+            outputName
+          )
+
+          // Read output file
+          const data = ffmpeg.FS('readFile', outputName)
+          const blob = new Blob([data.buffer], { type: 'image/gif' })
+          const url = URL.createObjectURL(blob)
+
+          resultGif.src = url
+          resultContainer.style.display = 'block'
+
+          downloadBtn.onclick = () => {
+            const a = document.createElement('a')
+            a.href = url
+            a.download = videoFile.name.replace('.mp4', '') + '.gif'
+            a.click()
+          }
+
+          // Clean up
+          ffmpeg.FS('unlink', inputName)
+          ffmpeg.FS('unlink', outputName)
+        } catch (error) {
+          console.error('Convert error:', error)
+          alert('转换失败: ' + error.message)
+        } finally {
+          convertBtn.disabled = false
+          convertBtn.textContent = '🎬 开始转换'
+          progressContainer.style.display = 'none'
         }
+      })
 
-        // Range input value displays
-        startTimeInput.addEventListener('input', () => {
-            document.getElementById('startTimeValue').textContent = startTimeInput.value + 's';
-        });
-
-        durationInput.addEventListener('input', () => {
-            document.getElementById('durationValue').textContent = durationInput.value + 's';
-        });
-
-        fpsInput.addEventListener('input', () => {
-            document.getElementById('fpsValue').textContent = fpsInput.value;
-        });
-
-        widthInput.addEventListener('input', () => {
-            document.getElementById('widthValue').textContent = widthInput.value + 'px';
-        });
-
-        // Convert
-        convertBtn.addEventListener('click', async () => {
-            if (!ffmpeg || !videoFile) return;
-
-            convertBtn.disabled = true;
-            convertBtn.textContent = '🔄 转换中...';
-            progressContainer.style.display = 'block';
-            resultContainer.style.display = 'none';
-
-            try {
-                const startTime = parseFloat(startTimeInput.value);
-                const duration = parseFloat(durationInput.value);
-                const fps = parseInt(fpsInput.value);
-                const width = parseInt(widthInput.value);
-
-                const inputName = 'input.mp4';
-                const outputName = 'output.gif';
-
-                // Write file to virtual filesystem
-                ffmpeg.FS('writeFile', inputName, await fetchFile(videoFile));
-
-                // Run FFmpeg command
-                await ffmpeg.run(
-                    '-i', inputName,
-                    '-ss', startTime.toString(),
-                    '-t', duration.toString(),
-                    '-vf', `fps=${fps},scale=${width}:-1:flags=lanczos`,
-                    outputName
-                );
-
-                // Read output file
-                const data = ffmpeg.FS('readFile', outputName);
-                const blob = new Blob([data.buffer], { type: 'image/gif' });
-                const url = URL.createObjectURL(blob);
-
-                resultGif.src = url;
-                resultContainer.style.display = 'block';
-
-                downloadBtn.onclick = () => {
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = videoFile.name.replace('.mp4', '') + '.gif';
-                    a.click();
-                };
-
-                // Clean up
-                ffmpeg.FS('unlink', inputName);
-                ffmpeg.FS('unlink', outputName);
-
-            } catch (error) {
-                console.error('Convert error:', error);
-                alert('转换失败: ' + error.message);
-            } finally {
-                convertBtn.disabled = false;
-                convertBtn.textContent = '🎬 开始转换';
-                progressContainer.style.display = 'none';
-            }
-        });
-
-        // Start loading FFmpeg immediately
-        initFFmpeg();
+      // Start loading FFmpeg immediately
+      initFFmpeg()
     </script>
-</body>
+  </body>
 </html>

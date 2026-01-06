@@ -6,6 +6,7 @@
 
 具体要求：
 
+- 使用 tailwindcss 美化页面样式
 - 响应式设计，支持移动端和桌面端。
 - 现代简约风格。
 - 页面结构包括合理划分。
@@ -84,3 +85,54 @@
 - 优化卡片样式，使其更有科技感
 
 - 继续增加卡片高度，同时，是轮播指示器置于卡片下方，轮播左右指示器，置于卡片左右侧，不要压在卡片上，卡片底部的立即使用按钮，离卡片底部的距离太小了，请合理规划卡片布局
+
+## gif编辑工具
+
+你是一位专业的前端开发专家。在[gif-editor]下创建一个完整的单文件HTML网页，所有代码（HTML、CSS、JavaScript）必须内嵌在同一个文件中，使用<style>标签放置CSS，使用<script>标签放置JavaScript。使用 ffmpegwasm 库来实现 GIF 编辑功能。
+
+引用示例
+
+```
+    const load = async () => {
+        const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt@0.12.10/dist/umd'
+        const ffmpeg = ffmpegRef.current;
+        ffmpeg.on('log', ({ message }) => {
+            messageRef.current.innerHTML = message;
+            console.log(message);
+        });
+        // toBlobURL is used to bypass CORS issue, urls with the same
+        // domain can be used directly.
+        await ffmpeg.load({
+            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+            workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
+        });
+        setLoaded(true);
+    }
+```
+
+网页主题：[gif编辑工具]
+
+具体要求：
+
+- 使用 tailwindcss 美化页面样式
+- 响应式设计，支持移动端和桌面端。
+- 现代简约风格。
+- 页面结构包括合理划分。
+- 交互效果。
+- 添加代码注释，解释关键部分。
+- 确保代码干净、可读、兼容现代浏览器。
+
+任务列表：
+
+- [ ] 设计用户界面
+- [ ] 实现基本功能
+- [ ] 添加README说明文档
+- [ ] 更新主项目的index.html添加抽奖工具入口
+- [ ] 更新主项目的README.md添加抽奖工具介绍
+
+- 修复GIF编辑功能,目前不能正常显示有多少帧
+- 优化布局
+
+- 考虑使用 FFMpeg 库来实现GIF编辑功能(通过CDN引入)
+- 使用 tailwindcss 美化页面样式(通过CDN引入)

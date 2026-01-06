@@ -270,6 +270,10 @@ tools/
 │   ├── index.html                   # 主页面
 │   └── README.md                    # 使用说明
 │
+├── gif-editor/                      # GIF 编辑工具
+│   ├── index.html                   # 主页面
+│   └── README.md                    # 使用说明
+│
 ├── index.html                       # 工具集合首页
 └── README.md                        # 项目介绍（本文件）
 ```
@@ -282,7 +286,7 @@ tools/
 - [x] 抽奖工具
 - [x] 图片分割
 - [x] 图片拼接
-- [ ] gif 分割
+- [x] GIF编辑工具
 
 ## 许可证
 
